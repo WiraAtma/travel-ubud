@@ -1,7 +1,7 @@
 <x-sidebar-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
+            {{ __('List Nama user admin bisa ban dll melihat apa saja yang di post') }}
         </h2>
     </x-slot>
 

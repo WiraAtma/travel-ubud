@@ -9,7 +9,9 @@
         
         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4);"></div>
         
-        <div style="position: absolute; top: 50%; left: 0; transform: translateY(-50%); color: white; padding-left: 60px; max-width: 50%; z-index: 10;">
+        {{-- Hero text: fade up dari tengah --}}
+        <div data-reveal="fade-up"
+            style="position: absolute; top: 50%; left: 0; transform: translateY(-50%); color: white; padding-left: 60px; max-width: 50%; z-index: 10;">
             <h1 class="font-extrabold" style="font-size: 48px; font-weight: bold; line-height: 1.2; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
                 Jelajahi Keindahan Ubud
             </h1>
@@ -19,9 +21,11 @@
             </p>
         </div>
     </header>
+
     <section class="wrapper">
+        {{-- Gambar dari kiri, teks dari kanan --}}
         <div class="flex flex-col md:flex-row items-center py-12 gap-8 md:gap-0">  
-            <div class="w-full md:w-5/12">
+            <div class="w-full md:w-5/12" data-reveal="fade-right">
                 <img 
                 src="https://www.baliagatour.co.id/wp-content/uploads/2025/04/Hidden-Spot-di-Ubud-yang-Jarang-Diketahui-Wisatawan.jpg" 
                 alt="Ubud Hidden Spot" 
@@ -29,7 +33,7 @@
                 >
             </div>
 
-            <div class="w-full md:w-7/12 md:pl-14">
+            <div class="w-full md:w-7/12 md:pl-14" data-reveal="fade-left" data-delay="200">
                 <h2 class="text-[42px] font-extrabold leading-tight">
                 Berikan Pengalaman Terbaik<br> dengan Layanan Kami
                 </h2>
@@ -39,8 +43,9 @@
             </div>
         </div>
 
+        {{-- Cards layanan: staggered fade-up --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pb-12">
-            <div class="p-4 rounded-2xl border border-gray-400 h-full">
+            <div class="p-4 rounded-2xl border border-gray-400 h-full" data-reveal="fade-up" data-delay="100">
                 <div class="bg-gray-100 rounded-full inline-flex items-center justify-center w-[54px] h-[54px] mb-3">
                 <i class="bi bi-airplane text-xl"></i>
                 </div>
@@ -48,7 +53,7 @@
                 <p class="text-gray-500 text-sm mt-1">Pesan tiket penerbangan dengan mudah dan harga terbaik ke Bali.</p>
             </div>
 
-            <div class="p-4 rounded-2xl border border-gray-400 h-full">
+            <div class="p-4 rounded-2xl border border-gray-400 h-full" data-reveal="fade-up" data-delay="200">
                 <div class="bg-gray-100 rounded-full inline-flex items-center justify-center w-[54px] h-[54px] mb-3">
                 <i class="bi bi-map text-xl"></i>
                 </div>
@@ -56,7 +61,7 @@
                 <p class="text-gray-500 text-sm mt-1">Jelajahi destinasi terbaik Ubud dengan paket tur pilihan kami.</p>
             </div>
 
-            <div class="p-4 rounded-2xl border border-gray-400 h-full">
+            <div class="p-4 rounded-2xl border border-gray-400 h-full" data-reveal="fade-up" data-delay="300">
                 <div class="bg-gray-100 rounded-full inline-flex items-center justify-center w-[54px] h-[54px] mb-3">
                 <i class="bi bi-building text-xl"></i>
                 </div>
@@ -64,7 +69,7 @@
                 <p class="text-gray-500 text-sm mt-1">Temukan akomodasi terbaik dari villa nyaman hingga resort mewah.</p>
             </div>
 
-            <div class="p-4 rounded-2xl border border-gray-400 h-full">
+            <div class="p-4 rounded-2xl border border-gray-400 h-full" data-reveal="fade-up" data-delay="400">
                 <div class="bg-gray-100 rounded-full inline-flex items-center justify-center w-[54px] h-[54px] mb-3">
                 <i class="bi bi-car-front text-xl"></i>
                 </div>
@@ -73,19 +78,24 @@
             </div>
         </div>
     </section>
+
     <div class="relative bg-cover bg-center py-20"
     style="background-image: url({{ asset('mid-image-dashboard.png') }});">
         <div class="absolute inset-0 bg-black/50"></div>
         <div class="wrapper relative z-10">
             <div class="flex flex-col md:flex-row items-center gap-10">
-            <div class="w-full md:w-5/12 text-white">
+
+            {{-- Teks kiri: fade dari kanan --}}
+            <div class="w-full md:w-5/12 text-white" data-reveal="fade-right">
                 <h2 class="text-5xl font-extrabold leading-tight">Cara Terbaik<br> Untuk Bepergian</h2>
                 <p class="mt-4 text-[15px] leading-relaxed text-white/85">
                 Temukan cara terbaik menjelajahi keindahan Ubud. Kami hadir untuk membuat setiap langkah perjalanan Anda mudah, nyaman, dan berkesan.
                 </p>
             </div>
+
+            {{-- Step cards: staggered fade-left --}}
             <div class="w-full md:w-7/12 flex flex-col gap-4">
-                <div class="flex items-start gap-4 bg-white rounded-2xl p-4 shadow-sm">
+                <div class="flex items-start gap-4 bg-white rounded-2xl p-4 shadow-sm" data-reveal="fade-left" data-delay="100">
                 <div class="shrink-0 flex items-center justify-center rounded-full border-2 border-gray-300 w-12 h-12 text-sm font-bold text-gray-500">
                     1
                 </div>
@@ -94,7 +104,8 @@
                     <p class="text-gray-500 text-sm mb-0">Pilih tiket perjalanan sesuai tujuan dan tanggal keberangkatan Anda dengan mudah.</p>
                 </div>
                 </div>
-                <div class="flex items-start gap-4 bg-white rounded-2xl p-4 shadow-sm">
+
+                <div class="flex items-start gap-4 bg-white rounded-2xl p-4 shadow-sm" data-reveal="fade-left" data-delay="250">
                 <div class="shrink-0 flex items-center justify-center rounded-full border-2 border-gray-300 w-12 h-12 text-sm font-bold text-gray-500">
                     2
                 </div>
@@ -103,7 +114,8 @@
                     <p class="text-gray-500 text-sm mb-0">Lakukan pemesanan dan pembayaran dengan aman melalui sistem kami yang terpercaya.</p>
                 </div>
                 </div>
-                <div class="flex items-start gap-4 bg-white rounded-2xl p-4 shadow-sm">
+
+                <div class="flex items-start gap-4 bg-white rounded-2xl p-4 shadow-sm" data-reveal="fade-left" data-delay="400">
                 <div class="shrink-0 flex items-center justify-center rounded-full border-2 border-gray-300 w-12 h-12 text-sm font-bold text-gray-500">
                     3
                 </div>
@@ -112,25 +124,25 @@
                     <p class="text-gray-500 text-sm mb-0">Nikmati setiap momen perjalanan Anda di Ubud dengan tenang dan penuh kenangan indah.</p>
                 </div>
                 </div>
-
             </div>
+
             </div>
         </div>
     </div>
+
     <section class="wrapper">
-        <!-- Header -->
-        <div class="text-center mb-10">
+        {{-- Heading section trending: fade-up --}}
+        <div class="text-center mb-10" data-reveal="fade-up">
         <h2 class="text-[42px] font-extrabold">Pilihan Destinasi Yang Sedang Trending</h2>
         <p class="text-gray-500 mx-auto mt-3 max-w-[480px] text-[15px] leading-relaxed">
             Temukan destinasi wisata paling populer pilihan para pelancong dari seluruh dunia yang wajib kamu kunjungi.
         </p>
         </div>
 
-        <!-- Cards -->
+        {{-- Cards destinasi: zoom-in staggered --}}
         <div class="flex justify-between gap-3">
 
-        <!-- Monkey Forest -->
-        <div class="rounded-2xl overflow-hidden shadow-sm border-0 shrink-0 w-72">
+        <div class="rounded-2xl overflow-hidden shadow-sm border-0 shrink-0 w-72" data-reveal="zoom-in" data-delay="100">
             <a class="no-underline text-gray-900 block" href="../tugas-uts-pweb/pages/information-monkey-forest.php">
             <img 
                 class="w-full h-[200px] object-cover" 
@@ -148,8 +160,7 @@
             </a>
         </div>
 
-        <!-- Art Market -->
-        <div class="rounded-2xl overflow-hidden shadow-sm border-0 shrink-0 w-72">
+        <div class="rounded-2xl overflow-hidden shadow-sm border-0 shrink-0 w-72" data-reveal="zoom-in" data-delay="200">
             <a class="no-underline text-gray-900 block" href="../tugas-uts-pweb/pages/information-art-market.php">
             <img 
                 class="w-full h-[200px] object-cover" 
@@ -167,8 +178,7 @@
             </a>
         </div>
 
-        <!-- Ubud Palace -->
-        <div class="rounded-2xl overflow-hidden shadow-sm border-0 shrink-0 w-72">
+        <div class="rounded-2xl overflow-hidden shadow-sm border-0 shrink-0 w-72" data-reveal="zoom-in" data-delay="300">
             <a class="no-underline text-gray-900 block" href="../tugas-uts-pweb/pages/information-ubud-palace.php">
             <img 
                 class="w-full h-[200px] object-cover" 
@@ -186,8 +196,7 @@
             </a>
         </div>
 
-        <!-- Tirta Empul -->
-        <div class="rounded-2xl overflow-hidden shadow-sm border-0 shrink-0 w-72">
+        <div class="rounded-2xl overflow-hidden shadow-sm border-0 shrink-0 w-72" data-reveal="zoom-in" data-delay="400">
             <a class="no-underline text-gray-900 block" href="../tugas-uts-pweb/pages/information-tirta-empul-temple.php">
             <img 
                 class="w-full h-[200px] object-cover" 
@@ -206,16 +215,18 @@
         </div>
         </div>
     </section>
+
     <section class="wrapper">
         <div class="py-12">
-        <h2 class="text-[48px] mb-10">
+        {{-- Heading: fade-up --}}
+        <h2 class="text-[48px] mb-10" data-reveal="fade-up">
             Amazing views of <span class="font-bold underline">Ubud</span>
         </h2>
 
         <div class="flex flex-col md:flex-row items-center gap-6">
 
-            <!-- Grid Foto -->
-            <div class="w-full md:w-7/12">
+            {{-- Grid foto: fade dari kiri --}}
+            <div class="w-full md:w-7/12" data-reveal="fade-right">
             <div class="grid grid-cols-3 gap-3">
                 <img src="https://goldenmonkeybali.com/wp-content/uploads/2022/01/ubud.webp" alt="ubud-1"
                 class="rounded-xl h-[180px] w-full object-cover bg-gray-200">
@@ -232,8 +243,8 @@
             </div>
             </div>
 
-            <!-- Text -->
-            <div class="w-full md:w-5/12 md:pl-4">
+            {{-- Teks: fade dari kanan --}}
+            <div class="w-full md:w-5/12 md:pl-4" data-reveal="fade-left" data-delay="200">
             <p class="text-[16px] leading-loose mb-5">
                 Terletak di dataran tinggi tengah Bali yang rimbun, Ubud dikelilingi oleh keindahan alam yang menakjubkan.
             </p>
@@ -249,19 +260,10 @@
         </div>
         </div>
     </section>
+
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Dashboard') }}
         </h2>
     </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    {{ __("You're logged in!") }}
-                </div>
-            </div>
-        </div>
-    </div>
 </x-app-layout>

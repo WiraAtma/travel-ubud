@@ -16,6 +16,11 @@
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('article')" :active="request()->routeIs('article')">
+                        {{ __('Artikel') }}
+                    </x-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('destinasi')" :active="request()->routeIs('destinasi')">
                         {{ __('Destinasi') }}
                     </x-nav-link>
@@ -35,18 +40,26 @@
                         {{ __('Hotel') }}
                     </x-nav-link>
                 </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('about-us')" :active="request()->routeIs('about-us')">
-                        {{ __('Tentang Kami') }}
-                    </x-nav-link>
-                </div>
-                @auth
+            @auth
+                @if(auth()->user()->role === 'admin')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('admin')" :active="request()->routeIs('admin')">
                         {{ __('Admin') }}
                     </x-nav-link>
                 </div>
-                @endauth
+                @endif
+
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('manage-post')" :active="request()->routeIs('manage-post')">
+                        {{ __('Kelola Postingan') }}
+                    </x-nav-link>
+                </div>
+            @endauth
+            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <x-nav-link :href="route('about-us')" :active="request()->routeIs('about-us')">
+                    {{ __('Tentang Kami') }}
+                </x-nav-link>
+            </div>
             </div>
 
             <!-- Settings Dropdown (Auth) / Login & Register (Guest) -->
