@@ -37,7 +37,7 @@ class ArticleController extends Controller
                      ->paginate(10)
                      ->withQueryString();
 
-        return view('features.admin.list-article-dashboard', compact('articles'));
+        return view('features.admin.list-article-admin', compact('articles'));
     }
 
     // List semua article dari semua user
@@ -55,7 +55,7 @@ class ArticleController extends Controller
                      ->paginate(10)
                      ->withQueryString();
 
-        return view('features.admin.list-article-dashboard', compact('articles'));
+        return view('features.admin.list-article-admin', compact('articles'));
     }
 
 
