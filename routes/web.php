@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Article\ArticleController;
 use App\Http\Controllers\Destination\DestinationController;
+use App\Http\Controllers\Hotel\HotelController;
 
 Route::view('/', 'dashboard')->name('home');
 
@@ -120,6 +121,37 @@ Route::middleware(['auth', 'verified'])
                     ->name('unban');
             });
     });
+
+Route::middleware(['auth', 'verified'])->group(function () {
+ 
+    Route::get('/admin/hotel', [HotelController::class, 'index'])
+        ->name('hotels.index');
+ 
+    Route::get('/admin/hotel/all', [HotelController::class, 'getAll'])
+        ->name('hotels.all');
+ 
+    Route::get('/admin/hotel/create', [HotelController::class, 'create'])
+        ->name('hotels.create');
+ 
+    Route::post('/admin/hotel', [HotelController::class, 'store'])
+        ->name('hotels.store');
+ 
+    Route::get('/admin/hotel/{hotel}/edit', [HotelController::class, 'edit'])
+        ->name('hotels.edit');
+ 
+    Route::put('/admin/hotel/{hotel}', [HotelController::class, 'update'])
+        ->name('hotels.update');
+ 
+    Route::delete('/admin/hotel/{hotel}', [HotelController::class, 'destroy'])
+        ->name('hotels.destroy');
+ 
+    Route::post('/admin/hotel/{hotel}/ban', [HotelController::class, 'ban'])
+        ->name('hotels.ban');
+ 
+    Route::post('/admin/hotel/{hotel}/unban', [HotelController::class, 'unban'])
+        ->name('hotels.unban');
+ 
+});
 
 Route::middleware('auth')
     ->prefix('profile')
