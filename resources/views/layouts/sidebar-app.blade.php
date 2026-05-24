@@ -4,13 +4,18 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-
         <title>{{ config('app.name', 'Laravel') }}</title>
-
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        {{-- CSS saja --}}
+        @vite(['resources/css/app.css'])
+        <link rel="stylesheet" href="{{ asset('vendor/summernote/summernote-lite.css') }}">
+
+        {{-- jQuery SYNC di head — wajib sebelum Summernote --}}
+        <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+        {{-- Summernote setelah jQuery --}}
+        <script src="{{ asset('vendor/summernote/summernote-lite.js') }}"></script>
     </head>
     <body class="font-sans antialiased">
 
@@ -47,7 +52,7 @@
                                 @endif
                                 @endauth
                                 <li>
-                                    <a href="/admin/list-user" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+                                    <a href="/admin/article" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                                         <svg class="shrink-0 w-5 h-5 transition duration-75 group-hover:text-fg-brand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16 19h4a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-2m-2.236-4a3 3 0 1 0 0-4M3 18v-1a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
                                         <span class="flex-1 ms-3 whitespace-nowrap">Kelola Artikel</span>
                                     </a>
@@ -85,6 +90,7 @@
             @include('layouts.footer')
 
         </div>
-
+        @vite(['resources/js/app.js'])
+        @stack('scripts')
     </body>
 </html>

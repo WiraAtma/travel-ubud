@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Article\ArticleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
@@ -44,13 +45,40 @@ Route::get('/admin/request-company', function () {
     return view('features.admin.request-company-admin');
 })->middleware(['auth', 'verified'])->name('admin.request-company');
 
-Route::get('/manage-post', function () {
+Route::get('/admin/manage-post', function () {
     return view('features.admin.list-post-destinasi-dashboard');
 })->middleware(['auth', 'verified'])->name('manage-post');
 
-Route::get('/form-post', function () {
+Route::get('/admin/form-post', function () {
     return view('features.dashboard.form-post-dashboard');
 })->middleware(['auth', 'verified'])->name('form-post');
+
+Route::get('/admin/article', [ArticleController::class, 'index'])
+->middleware(['auth', 'verified'])->name('articles.index');
+
+// Add the missing routes for article management
+Route::get('/admin/article/create', [ArticleController::class, 'create'])
+->middleware(['auth', 'verified'])->name('articles.create');
+
+Route::post('/admin/article', [ArticleController::class, 'store'])
+->middleware(['auth', 'verified'])->name('articles.store');
+
+Route::get('/admin/article/{article}/edit', [ArticleController::class, 'edit'])
+->middleware(['auth', 'verified'])->name('articles.edit');
+
+Route::put('/admin/article/{article}', [ArticleController::class, 'update'])
+->middleware(['auth', 'verified'])->name('articles.update');
+
+Route::delete('/admin/article/{article}', [ArticleController::class, 'destroy'])
+->middleware(['auth', 'verified'])->name('articles.destroy');
+
+Route::post('/admin/article/upload-image', [ArticleController::class, 'uploadImage'])
+    ->middleware(['auth', 'verified'])
+    ->name('articles.upload-image');
+
+Route::get('/admin/form-article', function () {
+    return view('features.form.article.create-article');
+})->middleware(['auth', 'verified'])->name('form-article');
 
 // Profile
 Route::middleware('auth')->group(function () {
