@@ -25,15 +25,39 @@ class ArticleController extends Controller
         }
     }
 
-    // List semua article
-    public function index()
+    // List semua article milik user yang sedang login
+    public function index(Request $request)
     {
+        $search = $request->query('search');
+
         $articles = Article::with('author')
+                     ->where('id_author', Auth::id())
+                     ->when($search, fn($q) => $q->where('title', 'like', "%{$search}%"))
                      ->orderBy('created_at', 'desc')
-                     ->paginate(10);
+                     ->paginate(10)
+                     ->withQueryString();
 
         return view('features.admin.list-article-dashboard', compact('articles'));
     }
+
+    // List semua article dari semua user
+    public function getAll(Request $request)
+    {
+        if (!in_array(Auth::user()->role, ['admin', 'superadmin'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $search = $request->query('search');
+
+        $articles = Article::with('author')
+                     ->when($search, fn($q) => $q->where('title', 'like', "%{$search}%"))
+                     ->orderBy('created_at', 'desc')
+                     ->paginate(10)
+                     ->withQueryString();
+
+        return view('features.admin.list-article-dashboard', compact('articles'));
+    }
+
 
     // Form create
     public function create()
@@ -70,12 +94,24 @@ class ArticleController extends Controller
     // Form edit
     public function edit(Article $article)
     {
+        if ($article->id_author !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        if ($article->banned) {
+            abort(403, 'Artikel ini sedang ditangguhkan/dibanned.');
+        }
         return view('features.form.article.update-article', compact('article'));
     }
 
     // Update article
     public function update(Request $request, Article $article)
     {
+        if ($article->id_author !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        if ($article->banned) {
+            abort(403, 'Artikel ini sedang ditangguhkan/dibanned.');
+        }
         $request->validate([
             'title'       => 'required|string|max:255',
             'image_cover' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -122,6 +158,17 @@ class ArticleController extends Controller
     // Hapus article
     public function destroy(Article $article)
     {
+        $isOwner = $article->id_author === Auth::id();
+        $isAdmin = in_array(Auth::user()->role, ['admin', 'superadmin']);
+
+        if (!$isOwner && !$isAdmin) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if ($isOwner && $article->banned) {
+            abort(403, 'Artikel ini sedang dibanned dan tidak dapat dihapus.');
+        }
+
         // Hapus cover
         if ($article->image_cover) {
             Storage::disk('public')->delete($article->image_cover);
@@ -147,5 +194,29 @@ class ArticleController extends Controller
         return response()->json([
             'url' => asset('storage/' . $path),
         ]);
+    }
+
+    // Ban article
+    public function ban(Article $article)
+    {
+        if (!in_array(Auth::user()->role, ['admin', 'superadmin'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $article->update(['banned' => true]);
+
+        return redirect()->back()->with('success', 'Article berhasil dibanned!');
+    }
+
+    // Unban article
+    public function unban(Article $article)
+    {
+        if (!in_array(Auth::user()->role, ['admin', 'superadmin'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $article->update(['banned' => false]);
+
+        return redirect()->back()->with('success', 'Article berhasil diunban!');
     }
 }

@@ -20,32 +20,57 @@
 }
 
 [data-reveal] {
-  opacity: 0;
-  transition: opacity 0.7s ease, transform 0.7s ease;
+    opacity: 0;
+    transition: opacity 0.7s ease, transform 0.7s ease;
 }
 
-[data-reveal="fade-up"] { transform: translateY(40px); }
-[data-reveal="fade-left"] { transform: translateX(40px); }
-[data-reveal="fade-right"] { transform: translateX(-40px); }
-[data-reveal="zoom-in"] { transform: scale(0.92); }
+[data-reveal="fade-up"] {
+    transform: translateY(40px);
+}
+
+[data-reveal="fade-left"] {
+    transform: translateX(40px);
+}
+
+[data-reveal="fade-right"] {
+    transform: translateX(-40px);
+}
+
+[data-reveal="zoom-in"] {
+    transform: scale(0.92);
+}
 
 [data-reveal].revealed {
-  opacity: 1;
-  transform: none;
+    opacity: 1;
+    transform: none;
 }
 
-[data-delay="100"] { transition-delay: 0.1s; }
-[data-delay="200"] { transition-delay: 0.2s; }
-[data-delay="300"] { transition-delay: 0.3s; }
-[data-delay="400"] { transition-delay: 0.4s; }
-[data-delay="500"] { transition-delay: 0.5s; }
+[data-delay="100"] {
+    transition-delay: 0.1s;
+}
 
-/* Summernote Image Alignment and Formatting Fix */
+[data-delay="200"] {
+    transition-delay: 0.2s;
+}
+
+[data-delay="300"] {
+    transition-delay: 0.3s;
+}
+
+[data-delay="400"] {
+    transition-delay: 0.4s;
+}
+
+[data-delay="500"] {
+    transition-delay: 0.5s;
+}
+
 .note-editable img {
     display: inline-block !important;
 }
 
-/* Also for when rendering rich text content on front-end views */
-.rich-content img, .article-content img, .prose img {
+.rich-content img,
+.article-content img,
+.prose img {
     display: inline-block !important;
 }

@@ -56,6 +56,10 @@ Route::get('/admin/form-post', function () {
 Route::get('/admin/article', [ArticleController::class, 'index'])
 ->middleware(['auth', 'verified'])->name('articles.index');
 
+Route::get('/admin/article/all', [ArticleController::class, 'getAll'])
+->middleware(['auth', 'verified'])->name('articles.all');
+
+
 // Add the missing routes for article management
 Route::get('/admin/article/create', [ArticleController::class, 'create'])
 ->middleware(['auth', 'verified'])->name('articles.create');
@@ -71,6 +75,12 @@ Route::put('/admin/article/{article}', [ArticleController::class, 'update'])
 
 Route::delete('/admin/article/{article}', [ArticleController::class, 'destroy'])
 ->middleware(['auth', 'verified'])->name('articles.destroy');
+
+Route::post('/admin/article/{article}/ban', [ArticleController::class, 'ban'])
+->middleware(['auth', 'verified'])->name('articles.ban');
+
+Route::post('/admin/article/{article}/unban', [ArticleController::class, 'unban'])
+->middleware(['auth', 'verified'])->name('articles.unban');
 
 Route::post('/admin/article/upload-image', [ArticleController::class, 'uploadImage'])
     ->middleware(['auth', 'verified'])

@@ -2,8 +2,28 @@
     <div class="max-w-7xl mx-auto px-4 py-10">
 
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-800">Kelola Users</h1>
-            <p class="text-gray-500 mt-1">Daftar semua pengguna yang terdaftar</p>
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Kelola Users</h1>
+                    <p class="text-gray-500 mt-1">Daftar semua pengguna yang terdaftar</p>
+                </div>
+            </div>
+            <div class="flex items-center justify-between gap-4">
+                {{-- Search --}}
+                <form action="{{ route('users.page') }}" method="GET" class="flex items-center gap-2 w-full max-w-sm">
+                    @if(request('role') && request('role') !== 'all')
+                        <input type="hidden" name="role" value="{{ request('role') }}" />
+                    @endif
+                    <div class="relative w-full">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" name="search" value="{{ request('search') }}"
+                               placeholder="Cari"
+                               class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition" />
+                    </div>
+                </form>
+            </div>
         </div>
 
         <div class="flex items-center gap-2 mb-4">

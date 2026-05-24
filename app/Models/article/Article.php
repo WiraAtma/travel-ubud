@@ -15,6 +15,7 @@ class Article extends Model
         'image_cover',
         'content',
         'id_author',
+        'banned',
     ];
 
     public function author()

@@ -172,12 +172,10 @@
         },
       });
 
-      // Prevent page jumping to top when clicking Summernote toolbar/dropdown buttons
       $(document).on('click', '.note-editor a[href="#"]', function (e) {
         e.preventDefault();
       });
 
-      // Preserve scroll position inside the editor when using toolbar/dropdowns/popovers
       let editorScrollTop = 0;
       $(document).on('mousedown', '.note-toolbar, .note-dropdown-menu, .note-popover', function () {
         const editable = $('.note-editable');
