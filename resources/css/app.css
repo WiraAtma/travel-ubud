@@ -39,3 +39,13 @@
 [data-delay="300"] { transition-delay: 0.3s; }
 [data-delay="400"] { transition-delay: 0.4s; }
 [data-delay="500"] { transition-delay: 0.5s; }
+
+/* Summernote Image Alignment and Formatting Fix */
+.note-editable img {
+    display: inline-block !important;
+}
+
+/* Also for when rendering rich text content on front-end views */
+.rich-content img, .article-content img, .prose img {
+    display: inline-block !important;
+}

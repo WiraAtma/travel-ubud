@@ -131,6 +131,8 @@
         lang: 'id-ID',
         height: 450,
         minHeight: 300,
+        followingToolbar: false,
+        dialogsInBody: true,
         placeholder: 'Tulis konten artikel di sini...',
 
         toolbar: [
@@ -168,6 +170,29 @@
             Array.from(files).forEach(file => uploadImageToServer(file, this));
           },
         },
+      });
+
+      // Prevent page jumping to top when clicking Summernote toolbar/dropdown buttons
+      $(document).on('click', '.note-editor a[href="#"]', function (e) {
+        e.preventDefault();
+      });
+
+      // Preserve scroll position inside the editor when using toolbar/dropdowns/popovers
+      let editorScrollTop = 0;
+      $(document).on('mousedown', '.note-toolbar, .note-dropdown-menu, .note-popover', function () {
+        const editable = $('.note-editable');
+        if (editable.length) {
+          editorScrollTop = editable.scrollTop();
+        }
+      });
+      $(document).on('click', '.note-toolbar, .note-dropdown-menu, .note-popover', function () {
+        const editable = $('.note-editable');
+        if (editable.length) {
+          const cachedScroll = editorScrollTop;
+          setTimeout(function () {
+            editable.scrollTop(cachedScroll);
+          }, 10);
+        }
       });
 
       function uploadImageToServer(file, editor) {
