@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,5 +23,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Blade::component('layouts.app', 'app-layout');
         Blade::component('layouts.sidebar-app', 'sidebar-app-layout');
+        Paginator::useTailwind();
     }
 }

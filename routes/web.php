@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Dashboard
@@ -32,26 +33,24 @@ Route::get('/about-us', function () {
     return view('features.dashboard.about-us-dashboard');
 })->name('about-us');
 
-Route::get('/manage-post', function () {
-    return view('features.dashboard.manage-post-dashboard');
-})->middleware(['auth', 'verified'])->name('manage-post');
-
-Route::get('/form-post', function () {
-    return view('features.dashboard.form-post-dashboard');
-})->middleware(['auth', 'verified'])->name('form-post');
-
 // Admin
 Route::get('/admin', function () {
     return view('admin');
 })->middleware(['auth', 'verified'])->name('admin');
 
-Route::get('/admin/list-user', function () {
-    return view('features.admin.list-user-admin');
-})->middleware(['auth', 'verified'])->name('admin.list-user');
+Route::get('/admin/list-user', [UserController::class, 'page'])->middleware(['auth', 'verified'])->name('users.page');
 
 Route::get('/admin/request-company', function () {
     return view('features.admin.request-company-admin');
 })->middleware(['auth', 'verified'])->name('admin.request-company');
+
+Route::get('/manage-post', function () {
+    return view('features.admin.list-post-destinasi-dashboard');
+})->middleware(['auth', 'verified'])->name('manage-post');
+
+Route::get('/form-post', function () {
+    return view('features.dashboard.form-post-dashboard');
+})->middleware(['auth', 'verified'])->name('form-post');
 
 // Profile
 Route::middleware('auth')->group(function () {
