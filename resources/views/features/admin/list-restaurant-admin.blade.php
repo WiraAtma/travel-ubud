@@ -165,12 +165,15 @@
                                             @if (in_array(auth()->user()->role, ['admin', 'superadmin']))
                                                 <form action="{{ route('restaurants.unban', $restaurant) }}" method="POST" class="inline">
                                                     @csrf
-                                                    <button type="submit" class="px-3 py-1.5 text-xs font-medium text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition">Unban</button>
+                                                    <button type="button"
+                                                        onclick="confirmAction(this.closest('form'), 'Unban Restoran?', 'Restoran ini akan aktif kembali.', 'question', 'Ya, Unban!')"
+                                                        class="px-3 py-1.5 text-xs font-medium text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition">Unban</button>
                                                 </form>
-                                                <form action="{{ route('restaurants.destroy', $restaurant) }}" method="POST"
-                                                      onsubmit="return confirm('Yakin ingin menghapus restoran ini?')">
+                                                <form action="{{ route('restaurants.destroy', $restaurant) }}" method="POST" class="inline">
                                                     @csrf @method('DELETE')
-                                                    <button type="submit" class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">Hapus</button>
+                                                    <button type="button"
+                                                        onclick="confirmDelete(this.closest('form'), 'Restoran ini akan dihapus permanen!')"
+                                                        class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">Hapus</button>
                                                 </form>
                                             @else
                                                 <span class="text-xs text-gray-400 italic">No Access</span>
@@ -179,23 +182,25 @@
                                     @else
                                         @if ($restaurant->id_author === auth()->id())
                                             <a href="{{ route('restaurants.edit', $restaurant) }}"
-                                               class="px-3 py-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">
-                                                Edit
-                                            </a>
-                                            <form action="{{ route('restaurants.destroy', $restaurant) }}" method="POST"
-                                                  onsubmit="return confirm('Yakin ingin menghapus restoran ini?')">
+                                            class="px-3 py-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">Edit</a>
+                                            <form action="{{ route('restaurants.destroy', $restaurant) }}" method="POST" class="inline">
                                                 @csrf @method('DELETE')
-                                                <button type="submit" class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">Hapus</button>
+                                                <button type="button"
+                                                    onclick="confirmDelete(this.closest('form'), 'Restoran ini akan dihapus permanen!')"
+                                                    class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">Hapus</button>
                                             </form>
                                         @elseif (in_array(auth()->user()->role, ['admin', 'superadmin']))
                                             <form action="{{ route('restaurants.ban', $restaurant) }}" method="POST" class="inline">
                                                 @csrf
-                                                <button type="submit" class="px-3 py-1.5 text-xs font-medium text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-lg transition">Ban</button>
+                                                <button type="button"
+                                                    onclick="confirmAction(this.closest('form'), 'Ban Restoran?', 'Restoran ini akan disembunyikan dari publik.', 'warning', 'Ya, Ban!')"
+                                                    class="px-3 py-1.5 text-xs font-medium text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-lg transition">Ban</button>
                                             </form>
-                                            <form action="{{ route('restaurants.destroy', $restaurant) }}" method="POST"
-                                                  onsubmit="return confirm('Yakin ingin menghapus restoran ini?')">
+                                            <form action="{{ route('restaurants.destroy', $restaurant) }}" method="POST" class="inline">
                                                 @csrf @method('DELETE')
-                                                <button type="submit" class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">Hapus</button>
+                                                <button type="button"
+                                                    onclick="confirmDelete(this.closest('form'), 'Restoran ini akan dihapus permanen!')"
+                                                    class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">Hapus</button>
                                             </form>
                                         @else
                                             <span class="text-xs text-gray-400 italic">No Access</span>

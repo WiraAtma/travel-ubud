@@ -154,7 +154,6 @@
                                 </div>
                             </td>
 
-                            {{-- Aksi --}}
                             <td class="px-6 py-4 text-center">
                                 <div class="flex items-center justify-center gap-2">
                                     @if ($hotel->banned)
@@ -166,12 +165,19 @@
                                             @if (in_array(auth()->user()->role, ['admin', 'superadmin']))
                                                 <form action="{{ route('hotels.unban', $hotel) }}" method="POST" class="inline">
                                                     @csrf
-                                                    <button type="submit" class="px-3 py-1.5 text-xs font-medium text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition">Unban</button>
+                                                    <button type="button"
+                                                        onclick="confirmAction(this.closest('form'), 'Unban Hotel?', 'Hotel ini akan aktif kembali.', 'question', 'Ya, Unban!')"
+                                                        class="px-3 py-1.5 text-xs font-medium text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition">
+                                                        Unban
+                                                    </button>
                                                 </form>
-                                                <form action="{{ route('hotels.destroy', $hotel) }}" method="POST"
-                                                      onsubmit="return confirm('Yakin ingin menghapus hotel ini?')">
+                                                <form action="{{ route('hotels.destroy', $hotel) }}" method="POST" class="inline">
                                                     @csrf @method('DELETE')
-                                                    <button type="submit" class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">Hapus</button>
+                                                    <button type="button"
+                                                        onclick="confirmDelete(this.closest('form'), 'Hotel ini akan dihapus permanen!')"
+                                                        class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">
+                                                        Hapus
+                                                    </button>
                                                 </form>
                                             @else
                                                 <span class="text-xs text-gray-400 italic">No Access</span>
@@ -180,23 +186,33 @@
                                     @else
                                         @if ($hotel->id_author === auth()->id())
                                             <a href="{{ route('hotels.edit', $hotel) }}"
-                                               class="px-3 py-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">
+                                            class="px-3 py-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">
                                                 Edit
                                             </a>
-                                            <form action="{{ route('hotels.destroy', $hotel) }}" method="POST"
-                                                  onsubmit="return confirm('Yakin ingin menghapus hotel ini?')">
+                                            <form action="{{ route('hotels.destroy', $hotel) }}" method="POST" class="inline">
                                                 @csrf @method('DELETE')
-                                                <button type="submit" class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">Hapus</button>
+                                                <button type="button"
+                                                    onclick="confirmDelete(this.closest('form'), 'Hotel ini akan dihapus permanen!')"
+                                                    class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">
+                                                    Hapus
+                                                </button>
                                             </form>
                                         @elseif (in_array(auth()->user()->role, ['admin', 'superadmin']))
                                             <form action="{{ route('hotels.ban', $hotel) }}" method="POST" class="inline">
                                                 @csrf
-                                                <button type="submit" class="px-3 py-1.5 text-xs font-medium text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-lg transition">Ban</button>
+                                                <button type="button"
+                                                    onclick="confirmAction(this.closest('form'), 'Ban Hotel?', 'Hotel ini akan disembunyikan dari publik.', 'warning', 'Ya, Ban!')"
+                                                    class="px-3 py-1.5 text-xs font-medium text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-lg transition">
+                                                    Ban
+                                                </button>
                                             </form>
-                                            <form action="{{ route('hotels.destroy', $hotel) }}" method="POST"
-                                                  onsubmit="return confirm('Yakin ingin menghapus hotel ini?')">
+                                            <form action="{{ route('hotels.destroy', $hotel) }}" method="POST" class="inline">
                                                 @csrf @method('DELETE')
-                                                <button type="submit" class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">Hapus</button>
+                                                <button type="button"
+                                                    onclick="confirmDelete(this.closest('form'), 'Hotel ini akan dihapus permanen!')"
+                                                    class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">
+                                                    Hapus
+                                                </button>
                                             </form>
                                         @else
                                             <span class="text-xs text-gray-400 italic">No Access</span>

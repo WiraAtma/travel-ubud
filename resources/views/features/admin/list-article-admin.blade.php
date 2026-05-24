@@ -143,72 +143,59 @@
                                   {{ \Carbon\Carbon::parse($article->updated_at)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
                               </td>
 
-                              {{-- Aksi --}}
-                              <td class="px-6 py-4 text-center">
-                                  <div class="flex items-center justify-center gap-2">
-                                      @if ($article->banned)
-                                          @if ($article->id_author === auth()->id())
-                                              <span class="px-2.5 py-1 text-xs font-semibold text-red-700 bg-red-100 rounded-lg">
-                                                  Konten Terbanned
-                                              </span>
-                                          @else
-                                              @if (in_array(auth()->user()->role, ['admin', 'superadmin']))
-                                                  <form action="{{ route('articles.unban', $article) }}" method="POST" class="inline">
-                                                      @csrf
-                                                      <button type="submit" class="px-3 py-1.5 text-xs font-medium text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition">
-                                                          Unban
-                                                      </button>
-                                                  </form>
-                                                  <form action="{{ route('articles.destroy', $article) }}" method="POST"
-                                                        onsubmit="return confirm('Yakin ingin menghapus article ini?')">
-                                                      @csrf
-                                                      @method('DELETE')
-                                                      <button type="submit"
-                                                              class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">
-                                                          Hapus
-                                                      </button>
-                                                  </form>
-                                              @else
-                                                  <span class="text-xs text-gray-400 italic">No Access</span>
-                                              @endif
-                                          @endif
-                                      @else
-                                          @if ($article->id_author === auth()->id())
-                                              <a href="{{ route('articles.edit', $article) }}"
-                                                 class="px-3 py-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">
-                                                  Edit
-                                              </a>
-                                              <form action="{{ route('articles.destroy', $article) }}" method="POST"
-                                                    onsubmit="return confirm('Yakin ingin menghapus article ini?')">
-                                                  @csrf
-                                                  @method('DELETE')
-                                                  <button type="submit"
-                                                          class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">
-                                                      Hapus
-                                                  </button>
-                                              </form>
-                                          @elseif (in_array(auth()->user()->role, ['admin', 'superadmin']))
-                                              <form action="{{ route('articles.ban', $article) }}" method="POST" class="inline">
-                                                  @csrf
-                                                  <button type="submit" class="px-3 py-1.5 text-xs font-medium text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-lg transition">
-                                                      Ban
-                                                  </button>
-                                              </form>
-                                              <form action="{{ route('articles.destroy', $article) }}" method="POST"
-                                                    onsubmit="return confirm('Yakin ingin menghapus article ini?')">
-                                                  @csrf
-                                                  @method('DELETE')
-                                                  <button type="submit"
-                                                          class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">
-                                                      Hapus
-                                                  </button>
-                                              </form>
-                                          @else
-                                              <span class="text-xs text-gray-400 italic">No Access</span>
-                                          @endif
-                                      @endif
-                                  </div>
-                              </td>
+                                {{-- Aksi --}}
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex items-center justify-center gap-2">
+                                        @if ($article->banned)
+                                            @if ($article->id_author === auth()->id())
+                                                <span class="px-2.5 py-1 text-xs font-semibold text-red-700 bg-red-100 rounded-lg">Konten Terbanned</span>
+                                            @else
+                                                @if (in_array(auth()->user()->role, ['admin', 'superadmin']))
+                                                    <form action="{{ route('articles.unban', $article) }}" method="POST" class="inline">
+                                                        @csrf
+                                                        <button type="button"
+                                                            onclick="confirmAction(this.closest('form'), 'Unban Artikel?', 'Artikel ini akan aktif kembali.', 'question', 'Ya, Unban!')"
+                                                            class="px-3 py-1.5 text-xs font-medium text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition">Unban</button>
+                                                    </form>
+                                                    <form action="{{ route('articles.destroy', $article) }}" method="POST" class="inline">
+                                                        @csrf @method('DELETE')
+                                                        <button type="button"
+                                                            onclick="confirmDelete(this.closest('form'), 'Artikel ini akan dihapus permanen!')"
+                                                            class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">Hapus</button>
+                                                    </form>
+                                                @else
+                                                    <span class="text-xs text-gray-400 italic">No Access</span>
+                                                @endif
+                                            @endif
+                                        @else
+                                            @if ($article->id_author === auth()->id())
+                                                <a href="{{ route('articles.edit', $article) }}"
+                                                class="px-3 py-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">Edit</a>
+                                                <form action="{{ route('articles.destroy', $article) }}" method="POST" class="inline">
+                                                    @csrf @method('DELETE')
+                                                    <button type="button"
+                                                        onclick="confirmDelete(this.closest('form'), 'Artikel ini akan dihapus permanen!')"
+                                                        class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">Hapus</button>
+                                                </form>
+                                            @elseif (in_array(auth()->user()->role, ['admin', 'superadmin']))
+                                                <form action="{{ route('articles.ban', $article) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    <button type="button"
+                                                        onclick="confirmAction(this.closest('form'), 'Ban Artikel?', 'Artikel ini akan disembunyikan dari publik.', 'warning', 'Ya, Ban!')"
+                                                        class="px-3 py-1.5 text-xs font-medium text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-lg transition">Ban</button>
+                                                </form>
+                                                <form action="{{ route('articles.destroy', $article) }}" method="POST" class="inline">
+                                                    @csrf @method('DELETE')
+                                                    <button type="button"
+                                                        onclick="confirmDelete(this.closest('form'), 'Artikel ini akan dihapus permanen!')"
+                                                        class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">Hapus</button>
+                                                </form>
+                                            @else
+                                                <span class="text-xs text-gray-400 italic">No Access</span>
+                                            @endif
+                                        @endif
+                                    </div>
+                                </td>
 
                           </tr>
                       @empty

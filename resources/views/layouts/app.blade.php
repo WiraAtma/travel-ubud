@@ -35,5 +35,70 @@
             @include('layouts.footer')
         </div>
         @stack('scripts')
+        @if (session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    timer: 2500,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end',
+                });
+            });
+        </script>
+        @endif
+
+        @if (session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: '{{ session('error') }}',
+                    confirmButtonColor: '#4f46e5',
+                });
+            });
+        </script>
+        @endif
+
+        @push('scripts')
+        <script>
+        function confirmDelete(form, subtitle = 'Data tidak bisa dikembalikan!') {
+            Swal.fire({
+                title: 'Yakin ingin menghapus?',
+                text: subtitle,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.isConfirmed) form.submit();
+            });
+        }
+
+        function confirmAction(form, title, text, icon = 'question', confirmText = 'Ya, Lanjutkan!') {
+            Swal.fire({
+                title: title,
+                text: text,
+                icon: icon,
+                showCancelButton: true,
+                confirmButtonColor: '#4f46e5',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: confirmText,
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.isConfirmed) form.submit();
+            });
+        }
+        </script>
+        @endpush
     </body>
 </html>

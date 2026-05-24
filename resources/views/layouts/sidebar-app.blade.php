@@ -79,18 +79,86 @@
                     </div>
                 </aside>
 
-                <!-- Content (kanan) -->
-                <main class="flex-1 p-4">
-                    {{ $slot }}
-                </main>
-
-            </div>
-
-            <!-- Footer (full width di bawah) -->
-            @include('layouts.footer')
-
+            <main class="flex-1 p-4">
+                {{ $slot }}
+            </main>
         </div>
-        @vite(['resources/js/app.js'])
-        @stack('scripts')
-    </body>
+
+        @include('layouts.footer')
+    </div>
+
+    @vite(['resources/js/app.js'])
+
+    <script>
+    function confirmDelete(form, subtitle) {
+        subtitle = subtitle || 'Data tidak bisa dikembalikan!';
+        Swal.fire({
+            title: 'Yakin ingin menghapus?',
+            text: subtitle,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            reverseButtons: true,
+        }).then(function(result) {
+            if (result.isConfirmed) form.submit();
+        });
+    }
+
+    function confirmAction(form, title, text, icon, confirmText) {
+        icon        = icon        || 'question';
+        confirmText = confirmText || 'Ya, Lanjutkan!';
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: icon,
+            showCancelButton: true,
+            confirmButtonColor: '#4f46e5',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: confirmText,
+            cancelButtonText: 'Batal',
+            reverseButtons: true,
+        }).then(function(result) {
+            if (result.isConfirmed) form.submit();
+        });
+    }
+    </script>
+
+    {{-- ✅ Flash messages — pakai @json agar quote aman --}}
+    @if (session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: @json(session('success')),
+                timer: 2500,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end',
+            });
+        });
+    </script>
+    @endif
+
+    @if (session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: @json(session('error')),
+                confirmButtonColor: '#4f46e5',
+            });
+        });
+    </script>
+    @endif
+
+    {{-- ✅ @stack PALING BAWAH --}}
+    @stack('scripts')
+
+</body>
 </html>
