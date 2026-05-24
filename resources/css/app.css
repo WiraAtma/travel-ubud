@@ -1,3 +1,20 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+@layer components {
+    .wrapper {
+        padding: 1.5rem 1rem;
+    }
+
+    @media (min-width: 768px) {
+        .wrapper {
+            padding: 2rem 3rem;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .wrapper {
+            padding: 50px 100px;
+        }
+    }
+}
