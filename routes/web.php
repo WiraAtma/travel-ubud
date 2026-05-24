@@ -136,6 +136,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
  
     Route::post('/admin/hotel', [HotelController::class, 'store'])
         ->name('hotels.store');
+
+    Route::post('/admin/hotel/upload-image', [HotelController::class, 'uploadImage'])
+        ->name('hotels.upload-image');
  
     Route::get('/admin/hotel/{hotel}/edit', [HotelController::class, 'edit'])
         ->name('hotels.edit');
@@ -167,6 +170,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
  
     Route::post('/admin/restaurant', [RestaurantController::class, 'store'])
         ->name('restaurants.store');
+ 
+    Route::post('/admin/restaurant/upload-image', [RestaurantController::class, 'uploadImage'])
+        ->name('restaurants.upload-image');
  
     Route::get('/admin/restaurant/{restaurant}/edit', [RestaurantController::class, 'edit'])
         ->name('restaurants.edit');

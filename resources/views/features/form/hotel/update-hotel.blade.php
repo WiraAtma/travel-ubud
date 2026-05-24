@@ -286,6 +286,20 @@ document.addEventListener('DOMContentLoaded', function () {
         { title: 'Heading 3', tag: 'h3', className: '', value: 'h3' },
         'blockquote', 'pre',
       ],
+      callbacks: {
+        onImageUpload: function (files) {
+          const editor = this;
+          Array.from(files).forEach(file => {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+            fetch('/admin/hotel/upload-image', { method: 'POST', body: formData })
+              .then(r => r.json())
+              .then(data => { if (data.url) $(editor).summernote('insertImage', data.url); })
+              .catch(() => alert('Gagal upload gambar.'));
+          });
+        },
+      },
     });
 
     let editorScrollTop = 0;

@@ -12,6 +12,16 @@ use Illuminate\Support\Facades\Storage;
 
 class HotelController extends Controller
 {
+    private function deleteContentImages(string $content): void
+    {
+        preg_match_all('/<img[^>]+src=["\']([^"\']+)["\']/', $content, $matches);
+        foreach ($matches[1] as $url) {
+            if (str_contains($url, '/storage/hotels/content-images/')) {
+                Storage::disk('public')->delete('hotels/content-images/' . basename($url));
+            }
+        }
+    }
+
     // -------------------------------------------------------
     // List hotel milik user yang login
     // -------------------------------------------------------
@@ -287,6 +297,8 @@ class HotelController extends Controller
             Storage::disk('public')->delete($hotel->image_cover);
         }
 
+        $this->deleteContentImages($hotel->description ?? '');
+
         // Hapus semua cover kamar
         $hotel->rooms->each(function (HotelRoom $room) {
             if ($room->image_cover) {
@@ -298,6 +310,22 @@ class HotelController extends Controller
 
         return redirect()->route('hotels.index')
                          ->with('success', 'Hotel berhasil dihapus!');
+    }
+
+    // -------------------------------------------------------
+    // Upload gambar konten Summernote
+    // -------------------------------------------------------
+    public function uploadImage(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|image|mimes:jpg,jpeg,png,webp,gif|max:4096',
+        ]);
+
+        $path = $request->file('file')->store('hotels/content-images', 'public');
+
+        return response()->json([
+            'url' => asset('storage/' . $path),
+        ]);
     }
 
     // -------------------------------------------------------

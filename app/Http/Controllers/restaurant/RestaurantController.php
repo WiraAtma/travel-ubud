@@ -24,6 +24,19 @@ class RestaurantController extends Controller
     ];
 
     // -------------------------------------------------------
+    // Hapus semua gambar konten dari HTML Summernote
+    // -------------------------------------------------------
+    private function deleteContentImages(string $content): void
+    {
+        preg_match_all('/<img[^>]+src=["\']([^"\']+)["\']/', $content, $matches);
+        foreach ($matches[1] as $url) {
+            if (str_contains($url, '/storage/restaurants/content-images/')) {
+                Storage::disk('public')->delete('restaurants/content-images/' . basename($url));
+            }
+        }
+    }
+
+    // -------------------------------------------------------
     // List restoran milik user yang login
     // -------------------------------------------------------
     public function index(Request $request)
@@ -283,6 +296,8 @@ class RestaurantController extends Controller
             Storage::disk('public')->delete($restaurant->image_cover);
         }
 
+        $this->deleteContentImages($restaurant->description ?? '');
+
         $restaurant->menus->each(function (RestaurantMenu $menu) {
             if ($menu->image) Storage::disk('public')->delete($menu->image);
         });
@@ -291,6 +306,22 @@ class RestaurantController extends Controller
 
         return redirect()->route('restaurants.index')
                          ->with('success', 'Restoran berhasil dihapus!');
+    }
+
+    // -------------------------------------------------------
+    // Upload gambar konten Summernote
+    // -------------------------------------------------------
+    public function uploadImage(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|image|mimes:jpg,jpeg,png,webp,gif|max:4096',
+        ]);
+
+        $path = $request->file('file')->store('restaurants/content-images', 'public');
+
+        return response()->json([
+            'url' => asset('storage/' . $path),
+        ]);
     }
 
     // -------------------------------------------------------
