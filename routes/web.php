@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Article\ArticleController;
+use App\Http\Controllers\Company\CompanyRequestController;
 use App\Http\Controllers\Destination\DestinationController;
 use App\Http\Controllers\Hotel\HotelController;
 use App\Http\Controllers\Restaurant\RestaurantController;
@@ -31,6 +32,24 @@ Route::prefix('/')->group(function () {
         ->name('about-us');
 });
 
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/company-request', [CompanyRequestController::class, 'store'])
+        ->name('company-request.store');
+    Route::delete('/company-request/cancel', [CompanyRequestController::class, 'cancel'])
+        ->name('company-request.cancel');
+});
+
+Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
+    Route::get('/request-company', [CompanyRequestController::class, 'index'])
+        ->name('admin.request-company');
+    Route::post('/request-company/{companyRequest}/approve', [CompanyRequestController::class, 'approve'])
+        ->name('admin.request-company.approve');
+    Route::post('/request-company/{companyRequest}/reject', [CompanyRequestController::class, 'reject'])
+        ->name('admin.request-company.reject');
+    Route::get('/request-company/{companyRequest}/proof', [CompanyRequestController::class, 'viewProof'])
+        ->name('admin.request-company.proof');
+});
+
 Route::middleware(['auth', 'verified'])
     ->prefix('admin')
     ->group(function () {
@@ -39,9 +58,6 @@ Route::middleware(['auth', 'verified'])
 
         Route::get('/list-user', [UserController::class, 'page'])
             ->name('users.page');
-
-        Route::view('/request-company', 'features.admin.request-company-admin')
-            ->name('admin.request-company');
 
         Route::view('/manage-post', 'features.admin.list-post-destinasi-dashboard')
             ->name('manage-post');
