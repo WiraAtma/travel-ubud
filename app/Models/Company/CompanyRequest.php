@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Company;
 
 use App\Models\User;
@@ -23,27 +24,32 @@ class CompanyRequest extends Model
 
     public function isPending(): bool
     {
-        return $this->status === 'pending';
+        return $this->normalizedStatus() === 'pending';
     }
 
     public function isApproved(): bool
     {
-        return $this->status === 'approved';
+        return $this->normalizedStatus() === 'approved';
     }
 
     public function isRejected(): bool
     {
-        return $this->status === 'rejected';
+        return $this->normalizedStatus() === 'rejected';
     }
 
     public function statusLabel(): string
     {
-        return match($this->status) {
+        return match($this->normalizedStatus()) {
             'pending'  => 'Menunggu',
             'approved' => 'Disetujui',
             'rejected' => 'Ditolak',
             default    => '-',
         };
+    }
+
+    private function normalizedStatus(): string
+    {
+        return strtolower(trim((string) $this->status));
     }
 
     public function fieldLabel(): string

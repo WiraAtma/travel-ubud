@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
@@ -26,7 +27,11 @@ class CompanyRequestController extends Controller
 
         $existing = $user->latestCompanyRequest;
         if ($existing && $existing->isPending()) {
-            return back()->with('error', 'Anda sudah memiliki pengajuan yang sedang diproses.');
+            return back()->with('swal', [
+                'icon' => 'error',
+                'title' => 'Pengajuan Masih Diproses',
+                'text' => 'Anda sudah memiliki pengajuan yang sedang diproses.',
+            ]);
         }
 
         $path = $request->file('proof_file')->store('company-proofs', 'public');
@@ -40,30 +45,44 @@ class CompanyRequestController extends Controller
             'status'       => 'pending',
         ]);
 
-        return back()->with('success', 'Pengajuan berhasil dikirim! Silakan tunggu konfirmasi admin.');
+        return back()->with('swal', [
+            'icon' => 'success',
+            'title' => 'Pengajuan Dikirim',
+            'text' => 'Pengajuan berhasil dikirim! Silakan tunggu konfirmasi admin.',
+            'toast' => true,
+        ]);
     }
 
-    // User: Batalkan pengajuan
     public function cancel()
     {
         $user           = Auth::user();
         $companyRequest = $user->latestCompanyRequest;
 
         if (!$companyRequest || !$companyRequest->isPending()) {
-            return back()->with('error', 'Tidak ada pengajuan yang bisa dibatalkan.');
+            return back()->with('swal', [
+                'icon' => 'error',
+                'title' => 'Tidak Bisa Dibatalkan',
+                'text' => 'Hanya pengajuan aktif yang sedang diproses yang bisa dibatalkan.',
+            ]);
         }
 
-        Storage::disk('public')->delete($companyRequest->proof_file);
+        if ($companyRequest->proof_file) {
+            Storage::disk('public')->delete($companyRequest->proof_file);
+        }
+        
         $companyRequest->delete();
 
-        return back()->with('success', 'Pengajuan berhasil dibatalkan.');
+        return back()->with('swal', [
+            'icon' => 'success',
+            'title' => 'Pengajuan Dibatalkan',
+            'text' => 'Pengajuan berhasil dibatalkan.',
+            'toast' => true,
+        ]);
     }
 
-    // Admin: List semua pengajuan
     public function index(Request $request)
     {
         $status = $request->get('status', 'all');
-
         $query = CompanyRequest::with('user')->latest();
 
         if ($status !== 'all') {
@@ -75,16 +94,23 @@ class CompanyRequestController extends Controller
         return view('features.admin.request-company-admin', compact('requests', 'status'));
     }
 
-    // Admin: Setujui pengajuan
     public function approve(CompanyRequest $companyRequest)
     {
         $companyRequest->update(['status' => 'approved']);
-        $companyRequest->user->update(['role' => 'company']);
 
-        return back()->with('success', "Pengajuan {$companyRequest->user->name} telah disetujui.");
+        $companyRequest->user->update([
+            'role'         => 'company',
+            'company_role' => $companyRequest->field 
+        ]);
+
+        return back()->with('swal', [
+            'icon' => 'success',
+            'title' => 'Pengajuan Disetujui',
+            'text' => "Pengajuan {$companyRequest->user->name} telah disetujui.",
+            'toast' => true,
+        ]);
     }
 
-    // Admin: Tolak pengajuan
     public function reject(Request $request, CompanyRequest $companyRequest)
     {
         $request->validate([
@@ -99,10 +125,14 @@ class CompanyRequestController extends Controller
             'rejection_reason' => $request->rejection_reason,
         ]);
 
-        return back()->with('success', "Pengajuan {$companyRequest->user->name} telah ditolak.");
+        return back()->with('swal', [
+            'icon' => 'success',
+            'title' => 'Pengajuan Ditolak',
+            'text' => "Pengajuan {$companyRequest->user->name} telah ditolak.",
+            'toast' => true,
+        ]);
     }
 
-    // Lihat file bukti
     public function viewProof(CompanyRequest $companyRequest)
     {
         $path = storage_path('app/public/' . $companyRequest->proof_file);

@@ -1,16 +1,3 @@
-
-@if (session('success'))
-    <div class="mb-4 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm">
-        {{ session('success') }}
-    </div>
-@endif
-
-@if (session('error'))
-    <div class="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm">
-        {{ session('error') }}
-    </div>
-@endif
-
 <form action="{{ route('company-request.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
 
@@ -65,13 +52,13 @@
             @enderror
         </div>
 
-        {{-- File Bukti --}}
+        {{-- File Bukti Dokumen --}}
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
                 Bukti Dokumen
             </label>
 
-            {{-- Preview --}}
+            {{-- Preview Box --}}
             <div id="proof-preview-wrapper" class="mb-3 hidden">
                 <div id="proof-preview-img-wrap" class="hidden">
                     <img id="proof-preview-img"
@@ -117,13 +104,12 @@
 
     </div>
 
-    <div class="mt-6 pt-4 border-t border-gray-100 flex justify-end">
+    <div class="mt-6 flex justify-end">
         <button type="submit"
-                class="px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition">
+                class="px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition shadow-sm">
             Ajukan Sekarang
         </button>
     </div>
-
 </form>
 
 @push('scripts')
@@ -143,7 +129,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!file) return;
 
             previewWrapper.classList.remove('hidden');
-
             const isImage = file.type.startsWith('image/');
             const sizeMB  = (file.size / 1024 / 1024).toFixed(2);
 

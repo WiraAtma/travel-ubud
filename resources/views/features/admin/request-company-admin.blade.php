@@ -6,10 +6,19 @@
         <p class="text-gray-500 mt-1">Kelola semua pengajuan mitra perusahaan</p>
     </div>
 
+    {{-- Alert Flash Message menggunakan SweetAlert --}}
     @if (session('success'))
-        <div class="mb-6 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm">
-            {{ session('success') }}
-        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    showConfirmButton: false,
+                    timer: 2500
+                });
+            });
+        </script>
     @endif
 
     {{-- Filter Status --}}
@@ -134,23 +143,26 @@
                                 @if ($req->isPending())
                                     <div class="flex items-center gap-2">
 
-                                        {{-- Setujui --}}
-                                        <form action="{{ route('admin.request-company.approve', $req) }}"
-                                              method="POST"
-                                              onsubmit="return confirm('Setujui pengajuan dari {{ $req->user->name }}?')">
+                                        {{-- Setujui (Sekarang pakai SweetAlert) --}}
+                                        <form action="{{ route('admin.request-company.approve', $req) }}" method="POST" class="inline">
                                             @csrf
-                                            <button type="submit"
+                                            <button type="button"
+                                                    onclick="confirmApprove(this.closest('form'), '{{ $req->user->name }}')"
                                                     class="px-3 py-1.5 text-xs font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition">
                                                 Setujui
                                             </button>
                                         </form>
 
-                                        {{-- Tolak --}}
-                                        <button type="button"
-                                                onclick="openRejectModal({{ $req->id }}, '{{ $req->user->name }}')"
-                                                class="px-3 py-1.5 text-xs font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg transition">
-                                            Tolak
-                                        </button>
+                                        {{-- Tolak (Sekarang pakai SweetAlert Input tanpa modal HTML ribet) --}}
+                                        <form id="reject-form-{{ $req->id }}" action="{{ route('admin.request-company.reject', $req) }}" method="POST" class="inline">
+                                            @csrf
+                                            <input type="hidden" name="rejection_reason" id="reason-hidden-{{ $req->id }}">
+                                            <button type="button"
+                                                    onclick="confirmReject({{ $req->id }}, '{{ $req->user->name }}')"
+                                                    class="px-3 py-1.5 text-xs font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg transition">
+                                                Tolak
+                                            </button>
+                                        </form>
 
                                     </div>
                                 @else
@@ -185,59 +197,58 @@
     </div>
 </div>
 
-{{-- Modal Tolak --}}
-<div id="reject-modal"
-     class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-1">Tolak Pengajuan</h3>
-        <p id="reject-modal-subtitle" class="text-sm text-gray-500 mb-4"></p>
-
-        <form id="reject-form" method="POST">
-            @csrf
-            <div class="mb-4">
-                <label for="rejection_reason" class="block text-sm font-medium text-gray-700 mb-2">
-                    Alasan Penolakan
-                </label>
-                <textarea name="rejection_reason"
-                          id="rejection_reason"
-                          rows="4"
-                          class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition resize-none"
-                          placeholder="Jelaskan alasan penolakan pengajuan ini..."></textarea>
-            </div>
-
-            <div class="flex justify-end gap-3">
-                <button type="button"
-                        onclick="closeRejectModal()"
-                        class="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition">
-                    Batal
-                </button>
-                <button type="submit"
-                        class="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg transition">
-                    Konfirmasi Tolak
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
 @push('scripts')
+{{-- CDN SweetAlert2 (jika belum dimasukkan di layout utama kamu) --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
-    function openRejectModal(id, name) {
-        const baseUrl = "{{ url('admin/request-company') }}";
-        document.getElementById('reject-form').action = baseUrl + '/' + id + '/reject';
-        document.getElementById('reject-modal-subtitle').textContent = 'Pengajuan dari: ' + name;
-        document.getElementById('rejection_reason').value = '';
-        document.getElementById('reject-modal').classList.remove('hidden');
+    // Fungsi Konfirmasi Setuju
+    function confirmApprove(form, name) {
+        Swal.fire({
+            title: 'Setujui Pengajuan?',
+            text: `Apakah Anda yakin ingin menyetujui pengajuan akun dari ${name}?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#16a34a', // Hijau Tailwind
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Setujui!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
     }
 
-    function closeRejectModal() {
-        document.getElementById('reject-modal').classList.add('hidden');
+    // Fungsi Konfirmasi Tolak dengan Form Input dari SweetAlert langsung
+    function confirmReject(id, name) {
+        Swal.fire({
+            title: 'Tolak Pengajuan',
+            text: `Masukkan alasan penolakan untuk pengajuan dari: ${name}`,
+            icon: 'warning',
+            input: 'textarea',
+            inputPlaceholder: 'Jelaskan alasan penolakan di sini...',
+            inputAttributes: {
+                'aria-label': 'Jelaskan alasan penolakan di sini'
+            },
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444', // Merah Tailwind
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Konfirmasi Tolak',
+            cancelButtonText: 'Batal',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Alasan penolakan tidak boleh kosong!';
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Isi input hidden dengan alasan dari SweetAlert lalu submit form
+                document.getElementById('reason-hidden-' + id).value = result.value;
+                document.getElementById('reject-form-' + id).submit();
+            }
+        });
     }
-
-    // Tutup modal klik backdrop
-    document.getElementById('reject-modal').addEventListener('click', function (e) {
-        if (e.target === this) closeRejectModal();
-    });
 </script>
 @endpush
 

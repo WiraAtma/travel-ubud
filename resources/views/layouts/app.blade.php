@@ -35,13 +35,31 @@
             @include('layouts.footer')
         </div>
         @stack('scripts')
-        @if (session('success'))
+        @if (session('swal'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const options = @json(session('swal'));
+
+                Swal.fire({
+                    icon: options.icon || 'info',
+                    title: options.title || '',
+                    text: options.text || '',
+                    timer: options.toast ? 2500 : undefined,
+                    timerProgressBar: !!options.toast,
+                    showConfirmButton: !options.toast,
+                    toast: !!options.toast,
+                    position: options.toast ? 'top-end' : 'center',
+                    confirmButtonColor: '#4f46e5',
+                });
+            });
+        </script>
+        @elseif (session('success'))
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 Swal.fire({
                     icon: 'success',
                     title: 'Berhasil!',
-                    text: '{{ session('success') }}',
+                    text: @json(session('success')),
                     timer: 2500,
                     timerProgressBar: true,
                     showConfirmButton: false,
@@ -50,15 +68,13 @@
                 });
             });
         </script>
-        @endif
-
-        @if (session('error'))
+        @elseif (session('error'))
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 Swal.fire({
                     icon: 'error',
                     title: 'Gagal!',
-                    text: '{{ session('error') }}',
+                    text: @json(session('error')),
                     confirmButtonColor: '#4f46e5',
                 });
             });

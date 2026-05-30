@@ -230,7 +230,25 @@
         }
         </script>
 
-        @if (session('success'))
+        @if (session('swal'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const options = @json(session('swal'));
+
+                Swal.fire({
+                    icon: options.icon || 'info',
+                    title: options.title || '',
+                    text: options.text || '',
+                    timer: options.toast ? 2500 : undefined,
+                    timerProgressBar: !!options.toast,
+                    showConfirmButton: !options.toast,
+                    toast: !!options.toast,
+                    position: options.toast ? 'top-end' : 'center',
+                    confirmButtonColor: '#4f46e5',
+                });
+            });
+        </script>
+        @elseif (session('success'))
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 Swal.fire({
@@ -245,9 +263,7 @@
                 });
             });
         </script>
-        @endif
-
-        @if (session('error'))
+        @elseif (session('error'))
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 Swal.fire({

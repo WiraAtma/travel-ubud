@@ -1,6 +1,8 @@
 <?php
+
 namespace App\Models;
 
+use App\Models\Company\CompanyRequest;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -31,12 +33,12 @@ class User extends Authenticatable
 
     public function latestCompanyRequest()
     {
-        return $this->hasOne(CompanyRequest::class)->latest();
+        return $this->hasOne(CompanyRequest::class)->latestOfMany();
     }
 
     public function companyRequests()
     {
-        return $this->hasMany(CompanyRequest::class);
+        return $this->hasMany(CompanyRequest::class)->latest();
     }
 
     public function isAdmin(): bool
