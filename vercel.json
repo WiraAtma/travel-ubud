@@ -20,9 +20,6 @@
             "dest": "public/storage/$1"
         },
         {
-            "handle": "filesystem"
-        },
-        {
             "src": "/(.*)",
             "dest": "/api/index.php"
         }
