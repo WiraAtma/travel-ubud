@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Hotel;
 
 use App\Http\Controllers\Controller;
 use App\Models\Hotel\Hotel;
+use App\Models\Hotel\HotelLink;
 use App\Models\Hotel\HotelRoom;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -68,7 +69,7 @@ class HotelController extends Controller
     }
 
     // -------------------------------------------------------
-    // Simpan hotel baru (beserta kamar-kamarnya)
+    // Simpan hotel baru (beserta kamar-kamarnya & links)
     // -------------------------------------------------------
     public function store(Request $request)
     {
@@ -93,6 +94,12 @@ class HotelController extends Controller
             'rooms.*.facilities'       => 'required_with:rooms|array|min:1',
             'rooms.*.facilities.*'     => 'required|string|max:100',
             'rooms.*.image_cover'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+
+            // Links
+            'links'                    => 'nullable|array',
+            'links.*.label'            => 'required_with:links|string|max:100',
+            'links.*.url'              => 'required_with:links|url|max:2048',
+            'links.*.image_cover'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         DB::transaction(function () use ($request) {
@@ -136,6 +143,25 @@ class HotelController extends Controller
                     ]);
                 }
             }
+
+            // Simpan links
+            if ($request->has('links')) {
+                foreach ($request->links as $index => $link) {
+                    $linkImagePath = null;
+                    if ($request->hasFile("links.{$index}.image_cover")) {
+                        $linkImagePath = $request->file("links.{$index}.image_cover")
+                                                  ->store('hotels/links', 'public');
+                    }
+
+                    HotelLink::create([
+                        'hotel_id'    => $hotel->id,
+                        'label'       => $link['label'],
+                        'url'         => $link['url'],
+                        'image_cover' => $linkImagePath,
+                        'sort_order'  => $index,
+                    ]);
+                }
+            }
         });
 
         return redirect()->route('hotels.index')
@@ -154,7 +180,7 @@ class HotelController extends Controller
             abort(403, 'Hotel ini sedang ditangguhkan/dibanned.');
         }
 
-        $hotel->load('rooms');
+        $hotel->load('rooms', 'links');
         return view('features.form.hotel.update-hotel', compact('hotel'));
     }
 
@@ -182,6 +208,8 @@ class HotelController extends Controller
             'description'   => 'required|string',
             'notes'         => 'nullable|string',
             'image_cover'   => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+
+            // Rooms
             'rooms'                    => 'nullable|array',
             'rooms.*.name'             => 'required_with:rooms|string|max:255',
             'rooms.*.max_guests'       => 'required_with:rooms|integer|min:1',
@@ -189,9 +217,14 @@ class HotelController extends Controller
             'rooms.*.facilities'       => 'required_with:rooms|array|min:1',
             'rooms.*.facilities.*'     => 'required|string|max:100',
             'rooms.*.image_cover'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-
-            // ID kamar existing yang diedit
             'rooms.*.id'               => 'nullable|integer|exists:hotel_rooms,id',
+
+            // Links
+            'links'                    => 'nullable|array',
+            'links.*.label'            => 'required_with:links|string|max:100',
+            'links.*.url'              => 'required_with:links|url|max:2048',
+            'links.*.image_cover'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'links.*.id'               => 'nullable|integer|exists:hotel_links,id',
         ]);
 
         DB::transaction(function () use ($request, $hotel) {
@@ -216,37 +249,25 @@ class HotelController extends Controller
                 'image_cover'   => $imagePath,
             ]);
 
-            // Kumpulkan ID kamar yang masih ada di form (untuk tahu mana yang dihapus)
+            // ── Rooms ──────────────────────────────────────────────
             $submittedRoomIds = collect($request->rooms ?? [])
-                ->pluck('id')
-                ->filter()
-                ->map(fn($id) => (int) $id)
-                ->toArray();
+                ->pluck('id')->filter()->map(fn($id) => (int) $id)->toArray();
 
-            // Hapus kamar yang sudah tidak ada di form
             $hotel->rooms->each(function (HotelRoom $room) use ($submittedRoomIds) {
                 if (!in_array($room->id, $submittedRoomIds)) {
-                    if ($room->image_cover) {
-                        Storage::disk('public')->delete($room->image_cover);
-                    }
+                    if ($room->image_cover) Storage::disk('public')->delete($room->image_cover);
                     $room->delete();
                 }
             });
 
-            // Update atau buat kamar
             foreach ($request->rooms ?? [] as $index => $roomData) {
                 $roomImagePath = null;
-
                 if ($request->hasFile("rooms.{$index}.image_cover")) {
-                    // Jika kamar existing, hapus cover lama dulu
                     if (!empty($roomData['id'])) {
-                        $existingRoom = HotelRoom::find($roomData['id']);
-                        if ($existingRoom && $existingRoom->image_cover) {
-                            Storage::disk('public')->delete($existingRoom->image_cover);
-                        }
+                        $existing = HotelRoom::find($roomData['id']);
+                        if ($existing?->image_cover) Storage::disk('public')->delete($existing->image_cover);
                     }
-                    $roomImagePath = $request->file("rooms.{$index}.image_cover")
-                                             ->store('hotels/rooms', 'public');
+                    $roomImagePath = $request->file("rooms.{$index}.image_cover")->store('hotels/rooms', 'public');
                 }
 
                 $roomPayload = [
@@ -256,19 +277,50 @@ class HotelController extends Controller
                     'price'      => $roomData['price'],
                     'facilities' => $roomData['facilities'],
                 ];
-
-                if ($roomImagePath) {
-                    $roomPayload['image_cover'] = $roomImagePath;
-                }
+                if ($roomImagePath) $roomPayload['image_cover'] = $roomImagePath;
 
                 if (!empty($roomData['id'])) {
-                    // Update kamar existing
-                    HotelRoom::where('id', $roomData['id'])
-                             ->where('hotel_id', $hotel->id)
-                             ->update($roomPayload);
+                    HotelRoom::where('id', $roomData['id'])->where('hotel_id', $hotel->id)->update($roomPayload);
                 } else {
-                    // Kamar baru
                     HotelRoom::create($roomPayload);
+                }
+            }
+
+            // ── Links ──────────────────────────────────────────────
+            $submittedLinkIds = collect($request->links ?? [])
+                ->pluck('id')->filter()->map(fn($id) => (int) $id)->toArray();
+
+            // Hapus link yang sudah tidak ada di form
+            $hotel->links->each(function (HotelLink $link) use ($submittedLinkIds) {
+                if (!in_array($link->id, $submittedLinkIds)) {
+                    if ($link->image_cover) Storage::disk('public')->delete($link->image_cover);
+                    $link->delete();
+                }
+            });
+
+            // Update atau buat link
+            foreach ($request->links ?? [] as $index => $linkData) {
+                $linkImagePath = null;
+                if ($request->hasFile("links.{$index}.image_cover")) {
+                    if (!empty($linkData['id'])) {
+                        $existing = HotelLink::find($linkData['id']);
+                        if ($existing?->image_cover) Storage::disk('public')->delete($existing->image_cover);
+                    }
+                    $linkImagePath = $request->file("links.{$index}.image_cover")->store('hotels/links', 'public');
+                }
+
+                $linkPayload = [
+                    'hotel_id'   => $hotel->id,
+                    'label'      => $linkData['label'],
+                    'url'        => $linkData['url'],
+                    'sort_order' => $index,
+                ];
+                if ($linkImagePath) $linkPayload['image_cover'] = $linkImagePath;
+
+                if (!empty($linkData['id'])) {
+                    HotelLink::where('id', $linkData['id'])->where('hotel_id', $hotel->id)->update($linkPayload);
+                } else {
+                    HotelLink::create($linkPayload);
                 }
             }
         });
@@ -285,31 +337,24 @@ class HotelController extends Controller
         $isOwner = $hotel->id_author === Auth::id();
         $isAdmin = in_array(Auth::user()->role, ['admin', 'superadmin']);
 
-        if (!$isOwner && !$isAdmin) {
-            abort(403, 'Unauthorized action.');
-        }
-        if ($isOwner && $hotel->banned) {
-            abort(403, 'Hotel ini sedang dibanned dan tidak dapat dihapus.');
-        }
+        if (!$isOwner && !$isAdmin) abort(403, 'Unauthorized action.');
+        if ($isOwner && $hotel->banned) abort(403, 'Hotel ini sedang dibanned dan tidak dapat dihapus.');
 
-        // Hapus cover hotel
-        if ($hotel->image_cover) {
-            Storage::disk('public')->delete($hotel->image_cover);
-        }
-
+        if ($hotel->image_cover) Storage::disk('public')->delete($hotel->image_cover);
         $this->deleteContentImages($hotel->description ?? '');
 
-        // Hapus semua cover kamar
         $hotel->rooms->each(function (HotelRoom $room) {
-            if ($room->image_cover) {
-                Storage::disk('public')->delete($room->image_cover);
-            }
+            if ($room->image_cover) Storage::disk('public')->delete($room->image_cover);
         });
 
-        $hotel->delete(); // rooms terhapus otomatis via cascade
+        // Hapus cover semua links
+        $hotel->links->each(function (HotelLink $link) {
+            if ($link->image_cover) Storage::disk('public')->delete($link->image_cover);
+        });
 
-        return redirect()->route('hotels.index')
-                         ->with('success', 'Hotel berhasil dihapus!');
+        $hotel->delete(); // cascade: rooms & links terhapus otomatis
+
+        return redirect()->route('hotels.index')->with('success', 'Hotel berhasil dihapus!');
     }
 
     // -------------------------------------------------------
@@ -323,9 +368,7 @@ class HotelController extends Controller
 
         $path = $request->file('file')->store('hotels/content-images', 'public');
 
-        return response()->json([
-            'url' => asset('storage/' . $path),
-        ]);
+        return response()->json(['url' => asset('storage/' . $path)]);
     }
 
     // -------------------------------------------------------
@@ -333,20 +376,14 @@ class HotelController extends Controller
     // -------------------------------------------------------
     public function ban(Hotel $hotel)
     {
-        if (!in_array(Auth::user()->role, ['admin', 'superadmin'])) {
-            abort(403, 'Unauthorized action.');
-        }
-
+        if (!in_array(Auth::user()->role, ['admin', 'superadmin'])) abort(403, 'Unauthorized action.');
         $hotel->update(['banned' => true]);
         return redirect()->back()->with('success', 'Hotel berhasil dibanned!');
     }
 
     public function unban(Hotel $hotel)
     {
-        if (!in_array(Auth::user()->role, ['admin', 'superadmin'])) {
-            abort(403, 'Unauthorized action.');
-        }
-
+        if (!in_array(Auth::user()->role, ['admin', 'superadmin'])) abort(403, 'Unauthorized action.');
         $hotel->update(['banned' => false]);
         return redirect()->back()->with('success', 'Hotel berhasil diunban!');
     }

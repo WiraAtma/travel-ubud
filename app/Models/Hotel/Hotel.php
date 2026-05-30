@@ -43,4 +43,9 @@ class Hotel extends Model
     {
         return $this->hasMany(HotelRoom::class);
     }
+
+    public function links()
+    {
+        return $this->hasMany(HotelLink::class)->orderBy('sort_order');
+    }
 }
