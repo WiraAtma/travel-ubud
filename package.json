@@ -5,7 +5,7 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "vercel-build": "mv public/storage/* public/ && npm install && vite build",
+        "vercel-build": "npm install && vite build",
         "serve": "php artisan serve",
         "dev:all": "concurrently \"php artisan serve\" \"vite\""
     },
