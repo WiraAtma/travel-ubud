@@ -1,5 +1,9 @@
 {
     "version": 2,
+    "framework": "laravel",
+    "commands": {
+        "build": "npm install && npm run build"
+    },
     "functions": {
         "api/index.php": {
             "runtime": "vercel-php@0.7.3"
@@ -7,12 +11,12 @@
     },
     "routes": [
         {
-            "src": "/img/(.*)",
-            "dest": "/public/img/"
+            "src": "/build/(.*)",
+            "dest": "/public/build/$1"
         },
         {
             "src": "/storage/(.*)",
-            "dest": "/public/storage/"
+            "dest": "/public/storage/$1"
         },
         {
             "src": "/(.*)",
