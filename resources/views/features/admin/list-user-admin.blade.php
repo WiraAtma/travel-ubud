@@ -111,7 +111,10 @@
                                         };
                                     @endphp
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize {{ $roleClass }}">
-                                        {{ $user->role }}
+                                        {{ $user->role }} 
+                                        @if ($user->company_role !== null)
+                                            - {{ $user->company_role }}
+                                        @endif
                                     </span>
                                 </td>
 
