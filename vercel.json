@@ -12,7 +12,7 @@
         },
         {
             "src": "/storage/(.*)",
-            "dest": "public/storage/$1"
+            "dest": "/tmp/public/$1"
         },
         {
             "src": "/assets/(.*)",
@@ -31,21 +31,13 @@
             "dest": "/api/index.php"
         }
     ],
-"env": {
+    "env": {
         "APP_ENV": "production",
         "APP_DEBUG": "true",
         "APP_URL": "https://ubud-travel.vercel.app/",
-        "APP_CONFIG_CACHE": "/tmp/config.php",
-        "APP_EVENTS_CACHE": "/tmp/events.php",
-        "APP_PACKAGES_CACHE": "/tmp/packages.php",
-        "APP_ROUTES_CACHE": "/tmp/routes.php",
-        "APP_SERVICES_CACHE": "/tmp/services.php",
-        "VIEW_COMPILED_PATH": "/tmp",
         "CACHE_DRIVER": "array",
         "LOG_CHANNEL": "stderr",
-        "SESSION_DRIVER": "cookie",
-        "FILESYSTEM_DISK": "local",
-        "LOCAL_ROOT": "/tmp"
+        "SESSION_DRIVER": "cookie"
     },
     "outputDirectory": "public"
 }
