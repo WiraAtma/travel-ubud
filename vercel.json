@@ -3,8 +3,6 @@
 
   "buildCommand": "npm run build",
 
-  "outputDirectory": "public",
-
   "functions": {
     "api/index.php": {
       "runtime": "vercel-php@0.7.3"
@@ -13,12 +11,16 @@
 
   "rewrites": [
     {
-      "source": "/build/:path*",
-      "destination": "/public/build/:path*"
+      "source": "/build/(.*)",
+      "destination": "/build/$1"
     },
     {
-      "source": "/storage/:path*",
-      "destination": "/public/storage/:path*"
+      "source": "/storage/(.*)",
+      "destination": "/storage/$1"
+    },
+    {
+      "source": "/images/(.*)",
+      "destination": "/images/$1"
     },
     {
       "source": "/(.*)",
