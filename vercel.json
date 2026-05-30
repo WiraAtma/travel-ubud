@@ -12,11 +12,18 @@
     "routes": [
         {
             "src": "/build/(.*)",
-            "dest": "/public/build/$1"
+            "dest": "public/build/$1"
+        },
+        {
+            "src": "/assets/(.*)",
+            "dest": "public/assets/$1"
         },
         {
             "src": "/storage/(.*)",
-            "dest": "/public/storage/$1"
+            "dest": "public/storage/$1"
+        },
+        {
+            "handle": "filesystem"
         },
         {
             "src": "/(.*)",
@@ -25,7 +32,7 @@
     ],
     "env": {
         "APP_ENV": "production",
-        "APP_DEBUG": "true",
+        "APP_DEBUG": "false",
         "APP_URL": "https://ubud-travel.vercel.app/",
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
