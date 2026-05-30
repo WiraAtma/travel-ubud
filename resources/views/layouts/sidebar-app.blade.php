@@ -13,6 +13,76 @@
         <link rel="stylesheet" href="{{ asset('vendor/summernote/summernote-lite.css') }}">
         <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('vendor/summernote/summernote-lite.js') }}"></script>
+
+        <style>
+            /* Sidebar mobile drawer */
+            #default-sidebar {
+                transition: transform 0.3s ease;
+            }
+
+            /* Mobile: posisi fixed sebagai drawer dari kiri */
+            @media (max-width: 639px) {
+                #default-sidebar {
+                    display: block !important;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    height: 100%;
+                    z-index: 40;
+                    transform: translateX(-100%);
+                    box-shadow: 4px 0 24px rgba(0,0,0,0.13);
+                }
+
+                #default-sidebar.open {
+                    transform: translateX(0);
+                }
+            }
+
+            /* Overlay backdrop */
+            #sidebar-backdrop {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.4);
+                z-index: 39;
+            }
+
+            #sidebar-backdrop.open {
+                display: block;
+            }
+
+            /* FAB button */
+            #sidebar-fab {
+                position: fixed;
+                bottom: 24px;
+                right: 24px;
+                z-index: 50;
+                width: 52px;
+                height: 52px;
+                border-radius: 50%;
+                background-color: #1f2937;
+                color: white;
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 22px;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+                transition: background-color 0.2s, transform 0.2s;
+            }
+
+            #sidebar-fab:active {
+                transform: scale(0.93);
+            }
+
+            /* Sembunyikan FAB di sm ke atas */
+            @media (min-width: 640px) {
+                #sidebar-fab {
+                    display: none;
+                }
+            }
+        </style>
     </head>
     <body class="font-sans antialiased">
 
@@ -20,9 +90,12 @@
 
             @include('layouts.navigation')
 
+            {{-- Backdrop overlay untuk mobile --}}
+            <div id="sidebar-backdrop"></div>
+
             <div class="flex flex-1">
 
-                <aside id="default-sidebar" class="w-64 shrink-0 bg-neutral-primary-soft bg-white border-e-gray-500 border-default hidden sm:block min-h-screen">
+                <aside id="default-sidebar" class="w-64 shrink-0 bg-white border-e border-gray-200 min-h-screen">
                     <div class="h-full px-3 py-4 overflow-y-auto">
                         <ul class="space-y-5 text-gray-600 font-medium">
                             @auth
@@ -37,7 +110,6 @@
                                     <a href="/admin/request-company" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                                         <i class="bi bi-building-fill-check"></i>
                                         <span class="flex-1 ms-3 whitespace-nowrap">Verified Company</span>
-                                        {{-- <span class="inline-flex items-center justify-center w-4.5 h-4.5 ms-2 text-xs font-medium text-fg-danger-strong bg-danger-soft border border-danger-subtle rounded-full">2</span> --}}
                                     </a>
                                 </li>
                                 <li>
@@ -76,82 +148,119 @@
                     </div>
                 </aside>
 
-            <main class="flex-1 p-4">
-                {{ $slot }}
-            </main>
+                <main class="flex-1 p-4">
+                    {{ $slot }}
+                </main>
+            </div>
+
+            @include('layouts.footer')
         </div>
 
-        @include('layouts.footer')
-    </div>
+        {{-- FAB Toggle Sidebar — hanya muncul di mobile --}}
+        <button id="sidebar-fab" aria-label="Buka menu">
+            <i class="bi bi-layout-sidebar" id="fab-icon"></i>
+        </button>
 
-    <script>
-    function confirmDelete(form, subtitle) {
-        subtitle = subtitle || 'Data tidak bisa dikembalikan!';
-        Swal.fire({
-            title: 'Yakin ingin menghapus?',
-            text: subtitle,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ef4444',
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Ya, Hapus!',
-            cancelButtonText: 'Batal',
-            reverseButtons: true,
-        }).then(function(result) {
-            if (result.isConfirmed) form.submit();
-        });
-    }
+        <script>
+            const fab         = document.getElementById('sidebar-fab');
+            const sidebar     = document.getElementById('default-sidebar');
+            const backdrop    = document.getElementById('sidebar-backdrop');
+            const fabIcon     = document.getElementById('fab-icon');
 
-    function confirmAction(form, title, text, icon, confirmText) {
-        icon        = icon        || 'question';
-        confirmText = confirmText || 'Ya, Lanjutkan!';
-        Swal.fire({
-            title: title,
-            text: text,
-            icon: icon,
-            showCancelButton: true,
-            confirmButtonColor: '#4f46e5',
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: confirmText,
-            cancelButtonText: 'Batal',
-            reverseButtons: true,
-        }).then(function(result) {
-            if (result.isConfirmed) form.submit();
-        });
-    }
-    </script>
+            function openSidebar() {
+                sidebar.classList.add('open');
+                backdrop.classList.add('open');
+                fabIcon.className = 'bi bi-x-lg';
+            }
 
-    @if (session('success'))
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: @json(session('success')),
-                timer: 2500,
-                timerProgressBar: true,
-                showConfirmButton: false,
-                toast: true,
-                position: 'top-end',
+            function closeSidebar() {
+                sidebar.classList.remove('open');
+                backdrop.classList.remove('open');
+                fabIcon.className = 'bi bi-layout-sidebar';
+            }
+
+            fab.addEventListener('click', function () {
+                sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
             });
-        });
-    </script>
-    @endif
 
-    @if (session('error'))
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
+            backdrop.addEventListener('click', closeSidebar);
+
+            // Tutup sidebar saat klik link di dalamnya (mobile UX)
+            sidebar.querySelectorAll('a').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    if (window.innerWidth < 640) closeSidebar();
+                });
+            });
+        </script>
+
+        <script>
+        function confirmDelete(form, subtitle) {
+            subtitle = subtitle || 'Data tidak bisa dikembalikan!';
             Swal.fire({
-                icon: 'error',
-                title: 'Gagal!',
-                text: @json(session('error')),
+                title: 'Yakin ingin menghapus?',
+                text: subtitle,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+            }).then(function(result) {
+                if (result.isConfirmed) form.submit();
+            });
+        }
+
+        function confirmAction(form, title, text, icon, confirmText) {
+            icon        = icon        || 'question';
+            confirmText = confirmText || 'Ya, Lanjutkan!';
+            Swal.fire({
+                title: title,
+                text: text,
+                icon: icon,
+                showCancelButton: true,
                 confirmButtonColor: '#4f46e5',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: confirmText,
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+            }).then(function(result) {
+                if (result.isConfirmed) form.submit();
             });
-        });
-    </script>
-    @endif
+        }
+        </script>
 
-    @stack('scripts')
+        @if (session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: @json(session('success')),
+                    timer: 2500,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end',
+                });
+            });
+        </script>
+        @endif
 
-</body>
+        @if (session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: @json(session('error')),
+                    confirmButtonColor: '#4f46e5',
+                });
+            });
+        </script>
+        @endif
+
+        @stack('scripts')
+
+    </body>
 </html>
