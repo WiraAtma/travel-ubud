@@ -3,8 +3,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
         "dev": "vite",
+        "build": "vite build",
+        "vercel-build": "npm install && vite build",
         "serve": "php artisan serve",
         "dev:all": "concurrently \"php artisan serve\" \"vite\""
     },

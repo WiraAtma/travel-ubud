@@ -2,9 +2,6 @@
     "$schema": "https://openapi.vercel.sh/vercel.json",
     "version": 2,
     "framework": "laravel",
-    "commands": {
-        "build": "npm install && npm run build"
-    },
     "functions": {
         "api/index.php": {
             "runtime": "vercel-php@0.7.3"
