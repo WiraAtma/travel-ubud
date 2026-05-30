@@ -83,7 +83,6 @@
                     </div>
                 </div>
 
-                {{-- Cover --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Gambar Sampul Restoran</label>
                     <div id="cover-preview-wrapper" class="{{ $restaurant->image_cover ? '' : 'hidden' }} mb-3">
@@ -108,14 +107,12 @@
                     @error('image_cover') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>
 
-                {{-- Deskripsi (Summernote) --}}
                 <div>
                     <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Deskripsi Restoran</label>
                     <textarea name="description" id="content">{{ old('description', $restaurant->description) }}</textarea>
                     @error('description') <p class="mt-1 text-sm text-red-600 mt-2">{{ $message }}</p> @enderror
                 </div>
 
-                {{-- Catatan --}}
                 <div>
                     <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">
                         Catatan <span class="text-gray-400 font-normal">(opsional)</span>
@@ -126,6 +123,127 @@
                 </div>
 
             </div>
+        </div>
+
+        {{-- ========== LINKS (LINKTREE STYLE) ========== --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <div>
+                    <h2 class="text-base font-semibold text-gray-700">Tautan Restoran</h2>
+                    <p class="text-xs text-gray-400 mt-0.5">Tambahkan link penting (Booking, Instagram, Maps, GoFood, dll.)</p>
+                </div>
+                <button type="button" id="add-link-btn"
+                        class="px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">
+                    + Tambah Tautan
+                </button>
+            </div>
+
+            {{-- Preview linktree --}}
+            <div id="links-preview-bar" class="{{ $restaurant->links->isNotEmpty() ? '' : 'hidden' }} px-6 pt-4">
+                <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Preview Tampilan</p>
+                <div id="links-preview-list" class="flex flex-wrap gap-2 mb-4">
+                    @foreach ($restaurant->links as $link)
+                    <div id="link-preview-chip-existing-{{ $link->id }}"
+                         class="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs rounded-full max-w-[180px] truncate">
+                        <span class="w-5 h-5 rounded-full bg-indigo-200 flex-shrink-0 overflow-hidden flex items-center justify-center">
+                            @if ($link->image_cover)
+                                <img src="{{ Storage::url($link->image_cover) }}" class="w-full h-full object-cover" alt="">
+                            @else
+                                <svg class="w-3 h-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                                </svg>
+                            @endif
+                        </span>
+                        <span class="truncate">{{ $link->label }}</span>
+                    </div>
+                    @endforeach
+                </div>
+                <hr class="border-gray-100">
+            </div>
+
+            <div id="links-container" class="divide-y divide-gray-100">
+
+                {{-- Links existing dari DB --}}
+                @foreach ($restaurant->links as $link)
+                <div class="p-6 relative" data-link-idx="existing-{{ $link->id }}">
+                    <input type="hidden" name="links[existing-{{ $link->id }}][id]" value="{{ $link->id }}">
+
+                    <button type="button" onclick="removeLink(this)"
+                            class="absolute top-4 right-5 text-gray-300 hover:text-red-500 transition text-lg font-bold leading-none" title="Hapus tautan">&times;</button>
+
+                    <h3 class="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                        </svg>
+                        Tautan #<span class="link-number"></span>
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Nama Tautan</label>
+                            <input type="text" name="links[existing-{{ $link->id }}][label]"
+                                   value="{{ old("links.existing-{$link->id}.label", $link->label) }}"
+                                   class="link-label-input w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                                   placeholder="Contoh: Instagram, GoFood, Google Maps"
+                                   oninput="updateExistingLinkPreview('existing-{{ $link->id }}')" required>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">URL Tautan</label>
+                            <input type="url" name="links[existing-{{ $link->id }}][url]"
+                                   value="{{ old("links.existing-{$link->id}.url", $link->url) }}"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                                   placeholder="https://..." required>
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-gray-600 mb-1">
+                                Cover Tautan
+                                <span class="text-gray-400 font-normal">(opsional — thumbnail/logo link)</span>
+                            </label>
+                            <div class="flex items-center gap-4">
+                                <div id="link-thumb-wrapper-existing-{{ $link->id }}"
+                                     class="w-14 h-14 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center bg-gray-50 overflow-hidden flex-shrink-0 transition">
+                                    @if ($link->image_cover)
+                                        <img id="link-thumb-img-existing-{{ $link->id }}"
+                                             src="{{ Storage::url($link->image_cover) }}"
+                                             alt="Cover" class="w-full h-full object-cover">
+                                    @else
+                                        <svg id="link-thumb-placeholder-existing-{{ $link->id }}" class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 8h.01"/>
+                                        </svg>
+                                        <img id="link-thumb-img-existing-{{ $link->id }}" src="#" alt="Cover" class="hidden w-full h-full object-cover">
+                                    @endif
+                                </div>
+                                <label for="link-cover-input-existing-{{ $link->id }}"
+                                       class="flex-1 flex items-center gap-2 px-3 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition text-xs text-gray-500 hover:text-indigo-600">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 8h.01"/>
+                                    </svg>
+                                    {{ $link->image_cover ? 'Ganti cover/logo' : 'Pilih cover/logo tautan (maks. 2MB)' }}
+                                </label>
+                                <input type="file" id="link-cover-input-existing-{{ $link->id }}"
+                                       name="links[existing-{{ $link->id }}][image_cover]"
+                                       accept="image/*" class="hidden"
+                                       onchange="previewLinkCover(this, 'existing-{{ $link->id }}')">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+
+            </div>
+
+            @if ($restaurant->links->isEmpty())
+            <div id="links-empty" class="px-6 py-10 text-center text-gray-400 text-sm">
+                Belum ada tautan. Klik <strong>+ Tambah Tautan</strong> untuk menambahkan link restoran.
+            </div>
+            @else
+            <div id="links-empty" class="hidden"></div>
+            @endif
         </div>
 
         {{-- ========== MENU ========== --}}
@@ -140,7 +258,6 @@
 
             <div id="menus-container" class="divide-y divide-gray-100">
 
-                {{-- Menu existing dari DB --}}
                 @foreach ($restaurant->menus as $menu)
                 <div class="p-6 relative" data-menu-idx="existing-{{ $menu->id }}">
                     <input type="hidden" name="menus[existing-{{ $menu->id }}][id]" value="{{ $menu->id }}">
@@ -151,7 +268,6 @@
                     <h3 class="text-sm font-semibold text-gray-700 mb-4">Menu #<span class="menu-number"></span></h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-
                         <div>
                             <label class="block text-xs font-medium text-gray-600 mb-1">Nama Menu</label>
                             <input type="text" name="menus[existing-{{ $menu->id }}][name]"
@@ -217,7 +333,6 @@
                                    class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                             <label for="avail-existing-{{ $menu->id }}" class="text-sm text-gray-600 cursor-pointer">Menu tersedia</label>
                         </div>
-
                     </div>
                 </div>
                 @endforeach
@@ -254,54 +369,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ── Summernote ────────────────────────────────────────────────
     $('#content').summernote({
-        height: 400,
-        minHeight: 300,
-        followingToolbar: false,
-        dialogsInBody: true,
+        height: 400, minHeight: 300, followingToolbar: false, dialogsInBody: true,
         placeholder: 'Tulis deskripsi lengkap restoran di sini...',
         toolbar: [
-            ['style',    ['style']],
-            ['font',     ['bold', 'underline', 'italic', 'strikethrough', 'clear']],
-            ['fontname', ['fontname']],
-            ['fontsize', ['fontsize']],
-            ['color',    ['color']],
-            ['para',     ['ul', 'ol', 'paragraph']],
-            ['table',    ['table']],
-            ['insert',   ['link', 'picture', 'video', 'hr']],
-            ['view',     ['fullscreen', 'codeview', 'undo', 'redo', 'help']],
-        ],
-        fontNames: ['Arial','Comic Sans MS','Courier New','Georgia','Tahoma','Times New Roman','Verdana','Inter','Poppins'],
-        fontSizes: ['10','11','12','13','14','15','16','18','20','22','24','28','32','36','48'],
-        styleTags: [
-            'p',
-            { title: 'Heading 1', tag: 'h1', className: '', value: 'h1' },
-            { title: 'Heading 2', tag: 'h2', className: '', value: 'h2' },
-            { title: 'Heading 3', tag: 'h3', className: '', value: 'h3' },
-            'blockquote', 'pre',
+            ['style', ['style']], ['font', ['bold','underline','italic','strikethrough','clear']],
+            ['fontname', ['fontname']], ['fontsize', ['fontsize']], ['color', ['color']],
+            ['para', ['ul','ol','paragraph']], ['table', ['table']],
+            ['insert', ['link','picture','video','hr']], ['view', ['fullscreen','codeview','undo','redo','help']],
         ],
         callbacks: {
             onImageUpload: function (files) {
                 const editor = this;
                 Array.from(files).forEach(file => {
-                    const formData = new FormData();
-                    formData.append('file', file);
-                    formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
-                    fetch('{{ route('restaurants.upload-image') }}', { method: 'POST', body: formData })
-                        .then(r => r.json())
-                        .then(data => { if (data.url) $(editor).summernote('insertImage', data.url); })
+                    const fd = new FormData();
+                    fd.append('file', file);
+                    fd.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+                    fetch('{{ route('restaurants.upload-image') }}', { method: 'POST', body: fd })
+                        .then(r => r.json()).then(d => { if (d.url) $(editor).summernote('insertImage', d.url); })
                         .catch(() => alert('Gagal upload gambar.'));
                 });
             },
         },
-    });
-
-    let editorScrollTop = 0;
-    $(document).on('mousedown', '.note-toolbar, .note-dropdown-menu, .note-popover', function () {
-        const ed = $('.note-editable'); if (ed.length) editorScrollTop = ed.scrollTop();
-    });
-    $(document).on('click', '.note-toolbar, .note-dropdown-menu, .note-popover', function () {
-        const ed = $('.note-editable');
-        if (ed.length) { const c = editorScrollTop; setTimeout(() => ed.scrollTop(c), 10); }
     });
 
     // ── Cover preview ─────────────────────────────────────────────
@@ -315,13 +403,30 @@ document.addEventListener('DOMContentLoaded', function () {
         reader.readAsDataURL(file);
     });
 
-    // ── Menu ──────────────────────────────────────────────────────
+    // ── Links ─────────────────────────────────────────────────────
+    let newLinkCounter = 0;
+    const linksContainer   = document.getElementById('links-container');
+    const linksEmpty       = document.getElementById('links-empty');
+    const linksPreviewBar  = document.getElementById('links-preview-bar');
+    const linksPreviewList = document.getElementById('links-preview-list');
+
+    renumberLinks();
+
+    document.getElementById('add-link-btn').addEventListener('click', () => {
+        const idx = 'new-' + (newLinkCounter++);
+        addLinkBlock(idx);
+        linksEmpty.classList.add('hidden');
+        linksPreviewBar.classList.remove('hidden');
+        renumberLinks();
+    });
+
+    // ── Menus ─────────────────────────────────────────────────────
     const menuCategories = @json($menuCategories);
     let newMenuCounter = 0;
     const menusContainer = document.getElementById('menus-container');
     const menusEmpty     = document.getElementById('menus-empty');
 
-    renumberMenus(); // nomori menu existing saat load
+    renumberMenus();
 
     document.getElementById('add-menu-btn').addEventListener('click', () => {
         const idx = 'new-' + (newMenuCounter++);
@@ -330,10 +435,89 @@ document.addEventListener('DOMContentLoaded', function () {
         renumberMenus();
     });
 
+    // ── Link block (new) ──────────────────────────────────────────
+    function addLinkBlock(idx) {
+        const block = document.createElement('div');
+        block.className = 'p-6 relative border-t border-gray-100';
+        block.dataset.linkIdx = idx;
+
+        block.innerHTML = `
+            <button type="button" onclick="removeLink(this)"
+                    class="absolute top-4 right-5 text-gray-300 hover:text-red-500 transition text-lg font-bold leading-none" title="Hapus tautan">&times;</button>
+
+            <h3 class="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                </svg>
+                Tautan #<span class="link-number"></span>
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Nama Tautan</label>
+                    <input type="text" name="links[${idx}][label]"
+                           class="link-label-input w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                           placeholder="Contoh: Instagram, GoFood, Google Maps"
+                           oninput="updateNewLinkPreview('${idx}')" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">URL Tautan</label>
+                    <input type="url" name="links[${idx}][url]"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                           placeholder="https://..." required>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-medium text-gray-600 mb-1">
+                        Cover Tautan
+                        <span class="text-gray-400 font-normal">(opsional — thumbnail/logo link)</span>
+                    </label>
+                    <div class="flex items-center gap-4">
+                        <div id="link-thumb-wrapper-${idx}"
+                             class="w-14 h-14 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center bg-gray-50 overflow-hidden flex-shrink-0 transition">
+                            <svg id="link-thumb-placeholder-${idx}" class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 8h.01"/>
+                            </svg>
+                            <img id="link-thumb-img-${idx}" src="#" alt="Cover" class="hidden w-full h-full object-cover">
+                        </div>
+                        <label for="link-cover-input-${idx}"
+                               class="flex-1 flex items-center gap-2 px-3 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition text-xs text-gray-500 hover:text-indigo-600">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 8h.01"/>
+                            </svg>
+                            Pilih cover/logo tautan (maks. 2MB)
+                        </label>
+                        <input type="file" id="link-cover-input-${idx}" name="links[${idx}][image_cover]"
+                               accept="image/*" class="hidden"
+                               onchange="previewLinkCover(this, '${idx}')">
+                    </div>
+                </div>
+            </div>
+        `;
+
+        linksContainer.appendChild(block);
+
+        // Preview chip
+        const preview = document.createElement('div');
+        preview.id = `link-preview-chip-${idx}`;
+        preview.className = 'flex items-center gap-2 px-3 py-1.5 bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs rounded-full max-w-[180px] truncate';
+        preview.innerHTML = `
+            <span id="link-preview-icon-${idx}" class="w-5 h-5 rounded-full bg-indigo-200 flex-shrink-0 overflow-hidden flex items-center justify-center">
+                <svg class="w-3 h-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                </svg>
+            </span>
+            <span id="link-preview-label-${idx}" class="truncate">Tautan baru</span>
+        `;
+        linksPreviewList.appendChild(preview);
+    }
+
+    // ── Menu block (new) ──────────────────────────────────────────
     function addMenuBlock(idx) {
         const categoryOptions = menuCategories
-            .map(c => `<option value="${c}">${c}</option>`)
-            .join('');
+            .map(c => `<option value="${c}">${c}</option>`).join('');
 
         const block = document.createElement('div');
         block.className = 'p-6 relative border-t border-gray-100';
@@ -341,9 +525,7 @@ document.addEventListener('DOMContentLoaded', function () {
         block.innerHTML = `
             <button type="button" onclick="removeMenu(this)"
                     class="absolute top-4 right-5 text-gray-300 hover:text-red-500 transition text-lg font-bold leading-none">&times;</button>
-
             <h3 class="text-sm font-semibold text-gray-700 mb-4">Menu #<span class="menu-number"></span></h3>
-
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label class="block text-xs font-medium text-gray-600 mb-1">Nama Menu</label>
@@ -400,12 +582,68 @@ document.addEventListener('DOMContentLoaded', function () {
         menusContainer.appendChild(block);
     }
 
+    // ── Global handlers ───────────────────────────────────────────
+    window.removeLink = function (btn) {
+        const block = btn.closest('[data-link-idx]');
+        const idx   = block.dataset.linkIdx;
+        // Hapus chip preview (bisa existing atau new)
+        document.getElementById(`link-preview-chip-existing-${idx.replace('existing-','')}`)?.remove();
+        document.getElementById(`link-preview-chip-${idx}`)?.remove();
+        block.remove();
+        renumberLinks();
+        if (!linksContainer.querySelector('[data-link-idx]')) {
+            linksEmpty.classList.remove('hidden');
+            linksPreviewBar.classList.add('hidden');
+        }
+    };
+
     window.removeMenu = function (btn) {
         btn.closest('[data-menu-idx]').remove();
         renumberMenus();
         if (!menusContainer.querySelector('[data-menu-idx]')) {
             menusEmpty.classList.remove('hidden');
         }
+    };
+
+    window.updateExistingLinkPreview = function (idx) {
+        const block = linksContainer.querySelector(`[data-link-idx="${idx}"]`);
+        if (!block) return;
+        const label   = block.querySelector('.link-label-input')?.value?.trim() || idx;
+        const chipId  = idx.startsWith('existing-')
+            ? `link-preview-chip-existing-${idx.replace('existing-', '')}`
+            : `link-preview-chip-${idx}`;
+        const labelEl = document.querySelector(`#${chipId} span:last-child`);
+        if (labelEl) labelEl.textContent = label;
+    };
+
+    window.updateNewLinkPreview = function (idx) {
+        const block = linksContainer.querySelector(`[data-link-idx="${idx}"]`);
+        if (!block) return;
+        const label   = block.querySelector('.link-label-input')?.value?.trim() || 'Tautan baru';
+        const labelEl = document.getElementById(`link-preview-label-${idx}`);
+        if (labelEl) labelEl.textContent = label;
+    };
+
+    window.previewLinkCover = function (input, idx) {
+        const file = input.files[0]; if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img         = document.getElementById(`link-thumb-img-${idx}`);
+            const placeholder = document.getElementById(`link-thumb-placeholder-${idx}`);
+            if (img) {
+                img.src = e.target.result;
+                img.classList.remove('hidden');
+            }
+            if (placeholder) placeholder.classList.add('hidden');
+
+            // Update chip icon (existing atau new)
+            const chipId  = String(idx).startsWith('existing-')
+                ? `link-preview-chip-existing-${String(idx).replace('existing-', '')}`
+                : `link-preview-chip-${idx}`;
+            const iconEl  = document.querySelector(`#${chipId} span:first-child`);
+            if (iconEl) iconEl.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover" alt="">`;
+        };
+        reader.readAsDataURL(file);
     };
 
     window.previewMenuImg = function (input, idx) {
@@ -417,6 +655,13 @@ document.addEventListener('DOMContentLoaded', function () {
         };
         reader.readAsDataURL(file);
     };
+
+    function renumberLinks() {
+        linksContainer.querySelectorAll('[data-link-idx]').forEach((block, i) => {
+            const num = block.querySelector('.link-number');
+            if (num) num.textContent = i + 1;
+        });
+    }
 
     function renumberMenus() {
         menusContainer.querySelectorAll('[data-menu-idx]').forEach((block, i) => {

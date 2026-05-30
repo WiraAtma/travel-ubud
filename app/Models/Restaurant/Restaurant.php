@@ -42,4 +42,9 @@ class Restaurant extends Model
     {
         return $this->hasMany(RestaurantMenu::class);
     }
+
+    public function links()
+    {
+        return $this->hasMany(RestaurantLink::class)->orderBy('sort_order');
+    }
 }

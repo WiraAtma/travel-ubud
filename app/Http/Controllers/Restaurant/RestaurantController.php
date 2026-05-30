@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Restaurant;
 
 use App\Http\Controllers\Controller;
 use App\Models\Restaurant\Restaurant;
+use App\Models\Restaurant\RestaurantLink;
 use App\Models\Restaurant\RestaurantMenu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -100,6 +101,11 @@ class RestaurantController extends Controller
             'notes'         => 'nullable|string',
             'image_cover'   => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
 
+            'links'                     => 'nullable|array',
+            'links.*.label'             => 'required_with:links|string|max:255',
+            'links.*.url'               => 'required_with:links|url|max:2048',
+            'links.*.image_cover'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+
             'menus'                   => 'nullable|array',
             'menus.*.name'            => 'required_with:menus|string|max:255',
             'menus.*.category'        => 'required_with:menus|in:' . implode(',', self::MENU_CATEGORIES),
@@ -130,6 +136,25 @@ class RestaurantController extends Controller
                 'id_author'   => Auth::id(),
             ]);
 
+            // Simpan links
+            $linkSortOrder = 0;
+            foreach ($request->links ?? [] as $linkKey => $link) {
+                $linkCoverPath = null;
+                if ($request->hasFile("links.{$linkKey}.image_cover")) {
+                    $linkCoverPath = $request->file("links.{$linkKey}.image_cover")
+                                             ->store('restaurants/links', 'public');
+                }
+
+                RestaurantLink::create([
+                    'restaurant_id' => $restaurant->id,
+                    'label'         => $link['label'],
+                    'url'           => $link['url'],
+                    'image_cover'   => $linkCoverPath,
+                    'sort_order'    => $linkSortOrder++,
+                ]);
+            }
+
+            // Simpan menus
             foreach ($request->menus ?? [] as $index => $menu) {
                 $menuImagePath = null;
                 if ($request->hasFile("menus.{$index}.image")) {
@@ -165,7 +190,7 @@ class RestaurantController extends Controller
             abort(403, 'Restoran ini sedang ditangguhkan/dibanned.');
         }
 
-        $restaurant->load('menus');
+        $restaurant->load(['menus', 'links']);
         $categories     = self::CATEGORIES;
         $menuCategories = self::MENU_CATEGORIES;
 
@@ -195,6 +220,12 @@ class RestaurantController extends Controller
             'close_time'    => 'required|date_format:H:i',
             'notes'         => 'nullable|string',
             'image_cover'   => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+
+            'links'                     => 'nullable|array',
+            'links.*.id'                => 'nullable|integer|exists:restaurant_links,id',
+            'links.*.label'             => 'required_with:links|string|max:255',
+            'links.*.url'               => 'required_with:links|url|max:2048',
+            'links.*.image_cover'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
 
             'menus'                   => 'nullable|array',
             'menus.*.id'              => 'nullable|integer|exists:restaurant_menus,id',
@@ -228,18 +259,65 @@ class RestaurantController extends Controller
                 'image_cover' => $imagePath,
             ]);
 
-            // Hapus menu yang tidak ada di form
-            $submittedIds = collect($request->menus ?? [])
+            // ── Links ──────────────────────────────────────────────────
+            $submittedLinkIds = collect($request->links ?? [])
                 ->pluck('id')->filter()->map(fn($id) => (int) $id)->toArray();
 
-            $restaurant->menus->each(function (RestaurantMenu $menu) use ($submittedIds) {
-                if (!in_array($menu->id, $submittedIds)) {
+            // Hapus link yang tidak ada di form
+            $restaurant->links->each(function (RestaurantLink $link) use ($submittedLinkIds) {
+                if (!in_array($link->id, $submittedLinkIds)) {
+                    if ($link->image_cover) Storage::disk('public')->delete($link->image_cover);
+                    $link->delete();
+                }
+            });
+
+            // Update atau buat link
+            $linkSortOrder = 0;
+            foreach ($request->links ?? [] as $linkKey => $linkData) {
+                $linkCoverPath = null;
+
+                if ($request->hasFile("links.{$linkKey}.image_cover")) {
+                    if (!empty($linkData['id'])) {
+                        $existingLink = RestaurantLink::find($linkData['id']);
+                        if ($existingLink && $existingLink->image_cover) {
+                            Storage::disk('public')->delete($existingLink->image_cover);
+                        }
+                    }
+                    $linkCoverPath = $request->file("links.{$linkKey}.image_cover")
+                                             ->store('restaurants/links', 'public');
+                }
+
+                $payload = [
+                    'restaurant_id' => $restaurant->id,
+                    'label'         => $linkData['label'],
+                    'url'           => $linkData['url'],
+                    'sort_order'    => $linkSortOrder++,
+                ];
+
+                if ($linkCoverPath) {
+                    $payload['image_cover'] = $linkCoverPath;
+                }
+
+                if (!empty($linkData['id'])) {
+                    RestaurantLink::where('id', $linkData['id'])
+                                  ->where('restaurant_id', $restaurant->id)
+                                  ->update($payload);
+                } else {
+                    RestaurantLink::create($payload);
+                }
+            }
+
+            // ── Menus ──────────────────────────────────────────────────
+            $submittedMenuIds = collect($request->menus ?? [])
+                ->pluck('id')->filter()->map(fn($id) => (int) $id)->toArray();
+
+            $restaurant->menus->each(function (RestaurantMenu $menu) use ($submittedMenuIds) {
+                if (!in_array($menu->id, $submittedMenuIds)) {
                     if ($menu->image) Storage::disk('public')->delete($menu->image);
                     $menu->delete();
                 }
             });
 
-            // Update atau buat menu
             foreach ($request->menus ?? [] as $index => $menuData) {
                 $menuImagePath = null;
 
@@ -297,6 +375,10 @@ class RestaurantController extends Controller
         }
 
         $this->deleteContentImages($restaurant->description ?? '');
+
+        $restaurant->links->each(function (RestaurantLink $link) {
+            if ($link->image_cover) Storage::disk('public')->delete($link->image_cover);
+        });
 
         $restaurant->menus->each(function (RestaurantMenu $menu) {
             if ($menu->image) Storage::disk('public')->delete($menu->image);
