@@ -8,6 +8,9 @@
         "serve": "php artisan serve",
         "dev:all": "concurrently \"php artisan serve\" \"vite\""
     },
+    "engines": {
+    "node": "20.x"
+    },
     "devDependencies": {
         "@rollup/plugin-inject": "^5.0.5",
         "@tailwindcss/forms": "^0.5.2",
