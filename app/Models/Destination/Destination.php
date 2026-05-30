@@ -32,4 +32,9 @@ class Destination extends Model
     {
         return $this->belongsTo(User::class, 'id_author');
     }
+
+    public function links()
+    {
+        return $this->hasMany(DestinationLink::class)->orderBy('sort_order');
+    }
 }

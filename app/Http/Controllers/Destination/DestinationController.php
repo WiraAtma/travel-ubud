@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Destination;
 
 use App\Http\Controllers\Controller;
 use App\Models\Destination\Destination;
+use App\Models\Destination\DestinationLink;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -73,12 +74,17 @@ class DestinationController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title'       => 'required|string|max:255',
-            'location'    => 'required|string|max:255',
-            'categories'  => 'required|array|min:1',
-            'categories.*'=> 'in:' . implode(',', self::CATEGORIES),
-            'image_cover' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'content'     => 'required|string',
+            'title'        => 'required|string|max:255',
+            'location'     => 'required|string|max:255',
+            'categories'   => 'required|array|min:1',
+            'categories.*' => 'in:' . implode(',', self::CATEGORIES),
+            'image_cover'  => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'content'      => 'required|string',
+
+            'links'               => 'nullable|array',
+            'links.*.label'       => 'required_with:links|string|max:255',
+            'links.*.url'         => 'required_with:links|url|max:2048',
+            'links.*.image_cover' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $imagePath = null;
@@ -87,7 +93,7 @@ class DestinationController extends Controller
                                  ->store('destinations/covers', 'public');
         }
 
-        Destination::create([
+        $destination = Destination::create([
             'title'       => $request->title,
             'location'    => $request->location,
             'categories'  => $request->categories,
@@ -95,6 +101,22 @@ class DestinationController extends Controller
             'content'     => $request->content,
             'id_author'   => Auth::id(),
         ]);
+
+        foreach ($request->links ?? [] as $sortOrder => $link) {
+            $linkCoverPath = null;
+            if ($request->hasFile("links.{$sortOrder}.image_cover")) {
+                $linkCoverPath = $request->file("links.{$sortOrder}.image_cover")
+                                         ->store('destinations/links', 'public');
+            }
+
+            DestinationLink::create([
+                'destination_id' => $destination->id,
+                'label'          => $link['label'],
+                'url'            => $link['url'],
+                'image_cover'    => $linkCoverPath,
+                'sort_order'     => $sortOrder,
+            ]);
+        }
 
         return redirect()->route('destinations.index')
                          ->with('success', 'Destinasi berhasil dibuat!');
@@ -110,6 +132,7 @@ class DestinationController extends Controller
             abort(403, 'Destinasi ini sedang ditangguhkan/dibanned.');
         }
 
+        $destination->load('links');
         $categories = self::CATEGORIES;
         return view('features.form.destination.update-destination', compact('destination', 'categories'));
     }
@@ -125,19 +148,24 @@ class DestinationController extends Controller
         }
 
         $request->validate([
-            'title'       => 'required|string|max:255',
-            'location'    => 'required|string|max:255',
-            'categories'  => 'required|array|min:1',
-            'categories.*'=> 'in:' . implode(',', self::CATEGORIES),
-            'image_cover' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'content'     => 'required|string',
+            'title'        => 'required|string|max:255',
+            'location'     => 'required|string|max:255',
+            'categories'   => 'required|array|min:1',
+            'categories.*' => 'in:' . implode(',', self::CATEGORIES),
+            'image_cover'  => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'content'      => 'required|string',
+
+            'links'               => 'nullable|array',
+            'links.*.id'          => 'nullable|integer|exists:destination_links,id',
+            'links.*.label'       => 'required_with:links|string|max:255',
+            'links.*.url'         => 'required_with:links|url|max:2048',
+            'links.*.image_cover' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
+        // Update cover
         $imagePath = $destination->image_cover;
         if ($request->hasFile('image_cover')) {
-            if ($imagePath) {
-                Storage::disk('public')->delete($imagePath);
-            }
+            if ($imagePath) Storage::disk('public')->delete($imagePath);
             $imagePath = $request->file('image_cover')
                                  ->store('destinations/covers', 'public');
         }
@@ -152,8 +180,7 @@ class DestinationController extends Controller
 
             foreach ($oldImages as $url) {
                 if (!in_array($url, $newImages) && str_contains($url, '/storage/destinations/content-images/')) {
-                    $path = 'destinations/content-images/' . basename($url);
-                    Storage::disk('public')->delete($path);
+                    Storage::disk('public')->delete('destinations/content-images/' . basename($url));
                 }
             }
         }
@@ -165,6 +192,54 @@ class DestinationController extends Controller
             'image_cover' => $imagePath,
             'content'     => $request->content,
         ]);
+
+        // Links
+        $submittedIds = collect($request->links ?? [])
+            ->pluck('id')->filter()->map(fn($id) => (int) $id)->toArray();
+
+        // Hapus link yang dihapus dari form
+        $destination->links->each(function (DestinationLink $link) use ($submittedIds) {
+            if (!in_array($link->id, $submittedIds)) {
+                if ($link->image_cover) Storage::disk('public')->delete($link->image_cover);
+                $link->delete();
+            }
+        });
+
+        // Update atau buat link
+        $linkSortOrder = 0;
+        foreach ($request->links ?? [] as $sortOrder => $linkData) {
+            $linkCoverPath = null;
+
+            if ($request->hasFile("links.{$sortOrder}.image_cover")) {
+                if (!empty($linkData['id'])) {
+                    $existing = DestinationLink::find($linkData['id']);
+                    if ($existing && $existing->image_cover) {
+                        Storage::disk('public')->delete($existing->image_cover);
+                    }
+                }
+                $linkCoverPath = $request->file("links.{$sortOrder}.image_cover")
+                                         ->store('destinations/links', 'public');
+            }
+
+            $payload = [
+                'destination_id' => $destination->id,
+                'label'          => $linkData['label'],
+                'url'            => $linkData['url'],
+                'sort_order'     => $linkSortOrder++,
+            ];
+
+            if ($linkCoverPath) {
+                $payload['image_cover'] = $linkCoverPath;
+            }
+
+            if (!empty($linkData['id'])) {
+                DestinationLink::where('id', $linkData['id'])
+                               ->where('destination_id', $destination->id)
+                               ->update($payload);
+            } else {
+                DestinationLink::create($payload);
+            }
+        }
 
         return redirect()->route('destinations.index')
                          ->with('success', 'Destinasi berhasil diupdate!');
@@ -189,6 +264,10 @@ class DestinationController extends Controller
         }
 
         $this->deleteContentImages($destination->content);
+
+        $destination->links->each(function (DestinationLink $link) {
+            if ($link->image_cover) Storage::disk('public')->delete($link->image_cover);
+        });
 
         $destination->delete();
 
@@ -218,7 +297,6 @@ class DestinationController extends Controller
         }
 
         $destination->update(['banned' => true]);
-
         return redirect()->back()->with('success', 'Destinasi berhasil dibanned!');
     }
 
@@ -230,7 +308,6 @@ class DestinationController extends Controller
         }
 
         $destination->update(['banned' => false]);
-
         return redirect()->back()->with('success', 'Destinasi berhasil diunban!');
     }
 }
