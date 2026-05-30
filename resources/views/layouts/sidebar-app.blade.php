@@ -8,13 +8,10 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        {{-- CSS saja --}}
-        @vite(['resources/css/app.css'])
-        <link rel="stylesheet" href="{{ asset('vendor/summernote/summernote-lite.css') }}">
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-        {{-- jQuery SYNC di head — wajib sebelum Summernote --}}
+        <link rel="stylesheet" href="{{ asset('vendor/summernote/summernote-lite.css') }}">
         <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-        {{-- Summernote setelah jQuery --}}
         <script src="{{ asset('vendor/summernote/summernote-lite.js') }}"></script>
     </head>
     <body class="font-sans antialiased">
@@ -87,8 +84,6 @@
         @include('layouts.footer')
     </div>
 
-    @vite(['resources/js/app.js'])
-
     <script>
     function confirmDelete(form, subtitle) {
         subtitle = subtitle || 'Data tidak bisa dikembalikan!';
@@ -126,7 +121,6 @@
     }
     </script>
 
-    {{-- ✅ Flash messages — pakai @json agar quote aman --}}
     @if (session('success'))
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -157,7 +151,6 @@
     </script>
     @endif
 
-    {{-- ✅ @stack PALING BAWAH --}}
     @stack('scripts')
 
 </body>

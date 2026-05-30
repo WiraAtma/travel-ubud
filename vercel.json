@@ -9,22 +9,13 @@
     }
   },
 
-  "rewrites": [
+  "routes": [
     {
-      "source": "/build/(.*)",
-      "destination": "/build/$1"
+      "handle": "filesystem"
     },
     {
-      "source": "/storage/(.*)",
-      "destination": "/storage/$1"
-    },
-    {
-      "source": "/images/(.*)",
-      "destination": "/images/$1"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/api/index.php"
+      "src": "/(.*)",
+      "dest": "/api/index.php"
     }
   ],
 
