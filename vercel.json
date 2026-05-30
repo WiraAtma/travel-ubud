@@ -9,6 +9,10 @@
 
   "rewrites": [
     {
+      "source": "/build/:path*",
+      "destination": "/public/build/:path*"
+    },
+    {
       "source": "/img/:path*",
       "destination": "/public/img/:path*"
     },
