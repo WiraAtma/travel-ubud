@@ -3,7 +3,7 @@
 
 "version": 2,
 
-"buildCommand": "composer run vercel-build",
+"buildCommand": "npm run build",
 
 "outputDirectory": "public",
 
