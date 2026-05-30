@@ -20,7 +20,8 @@
             "dest": "public/assets/$1"
         },
         {
-            "handle": "filesystem"
+            "src": "/(.*\.(?:png|jpg|jpeg|gif|ico|svg|css|js|txt))",
+            "dest": "public/$1"
         },
         {
             "src": "/(.*)",
