@@ -31,7 +31,7 @@
             "dest": "/api/index.php"
         }
     ],
-    "env": {
+"env": {
         "APP_ENV": "production",
         "APP_DEBUG": "true",
         "APP_URL": "https://ubud-travel.vercel.app/",
@@ -45,7 +45,7 @@
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie",
         "FILESYSTEM_DISK": "local",
-        "local.root": "/tmp"
+        "LOCAL_ROOT": "/tmp"
     },
     "outputDirectory": "public"
 }
