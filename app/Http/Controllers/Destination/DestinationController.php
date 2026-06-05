@@ -45,6 +45,26 @@ class DestinationController extends Controller
         return view('features.admin.list-destination-admin', compact('destinations'));
     }
 
+    public function page(Request $request)
+    {
+        $search = $request->query('search');
+
+        $topDestinations = Destination::where('banned', false)
+            ->orderBy('rating', 'desc')
+            ->orderBy('rating_count', 'desc')
+            ->limit(5)
+            ->get();
+
+        $destinations = Destination::where('banned', false)
+            ->when($search, fn($q) => $q->where('title', 'like', "%{$search}%")
+                                        ->orWhere('location', 'like', "%{$search}%"))
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('features.dashboard.destinasi-dashboard', compact('topDestinations', 'destinations', 'search'));
+    }
+
     // List semua destinasi (admin & superadmin)
     public function getAll(Request $request)
     {

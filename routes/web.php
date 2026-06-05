@@ -10,11 +10,10 @@ use App\Http\Controllers\Destination\DestinationController;
 use App\Http\Controllers\Hotel\HotelController;
 use App\Http\Controllers\Restaurant\RestaurantController;
 
-Route::view('/', 'dashboard')->name('home');
+    Route::view('/', 'dashboard')->name('home');
 
-Route::prefix('/')->group(function () {
-    Route::view('destinasi', 'features.dashboard.destinasi-dashboard')
-        ->name('destinasi');
+    Route::prefix('/')->group(function () {
+    Route::get('destinasi', [DestinationController::class, 'page'])->name('destinasi');
 
     Route::view('article', 'features.dashboard.article-dashboard')
         ->name('article');
