@@ -8,16 +8,19 @@
         >
         
         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4);"></div>
-        
-        <div data-reveal="fade-up"
-            style="position: absolute; top: 50%; left: 0; transform: translateY(-50%); color: white; padding: 0 24px; width: 100%; max-width: 600px; z-index: 10; box-sizing: border-box;">
-            <h1 class="font-extrabold" style="font-size: clamp(28px, 5vw, 48px); font-weight: bold; line-height: 1.2; margin-bottom: 16px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
-                Jelajahi Keindahan Ubud
-            </h1>
-            <p style="font-size: clamp(14px, 3vw, 16px); line-height: 1.6; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
-                Temukan pesona alam, budaya, dan ketenangan di jantung Bali. 
-                Ubud menghadirkan pengalaman wisata yang tak hanya indah, tetapi juga berkesan.
-            </p>
+
+        <div class="header-container"> 
+            <div data-reveal="fade-up" class="header-text-content">
+                <h1 class="font-extrabold" style="font-size: clamp(28px, 5vw, 48px); font-weight: bold; line-height: 1.2; margin-bottom: 16px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+                    Jelajahi Keindahan Ubud
+                </h1>
+                <p style="font-size: clamp(14px, 3vw, 16px); line-height: 1.6; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+                    Temukan pesona alam, budaya, dan ketenangan di jantung Bali. 
+                </p>
+                <p style="font-size: clamp(14px, 3vw, 16px); line-height: 1.6; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+                    Ubud menghadirkan pengalaman wisata yang tak hanya indah, tetapi juga berkesan.
+                </p>
+            </div>
         </div>
     </header>
 

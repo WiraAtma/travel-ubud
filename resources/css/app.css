@@ -17,6 +17,36 @@
             padding: 50px 100px;
         }
     }
+
+    .header-text-content {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    @media (min-width: 768px) {
+        .header-text-content {
+            padding-left: 3rem;
+            padding-right: 3rem;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .header-text-content {
+            padding-left: 100px;
+            padding-right: 100px;
+        }
+    }
+
+    .header-container {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        transform: translateY(-50%);
+        color: white;
+        z-index: 10;
+        box-sizing: border-box;
+    }
 }
 
 [data-reveal] {
