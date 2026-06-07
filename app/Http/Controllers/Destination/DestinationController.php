@@ -50,12 +50,21 @@ class DestinationController extends Controller
         if ($destination->banned) {
             abort(404);
         }
-
+    
         $destination->load('links', 'author');
-
-        return view('features.detail.destinasi-detail', compact('destination'));
+    
+        $comments = $destination->comments()->get();
+    
+        $userRating = null;
+        if (Auth::check()) {
+            $userRating = \App\Models\Destination\DestinationRating::where('destination_id', $destination->id)
+                ->where('user_id', Auth::id())
+                ->value('score');
+        }
+    
+        return view('features.detail.destination.destinasi-detail', compact('destination', 'comments', 'userRating'));
     }
-
+    
     public function page(Request $request)
     {
         $search = $request->query('search');

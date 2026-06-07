@@ -7,6 +7,8 @@ use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Article\ArticleController;
 use App\Http\Controllers\Company\CompanyRequestController;
 use App\Http\Controllers\Destination\DestinationController;
+use App\Http\Controllers\Destination\DestinationCommentController;
+use App\Http\Controllers\Destination\DestinationRatingController;
 use App\Http\Controllers\Hotel\HotelController;
 use App\Http\Controllers\Restaurant\RestaurantController;
 
@@ -38,6 +40,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('company-request.store');
     Route::delete('/company-request/cancel', [CompanyRequestController::class, 'cancel'])
         ->name('company-request.cancel');
+});
+
+// ── Destination Comments & Rating ──
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/destinasi/{destination}/comments', [DestinationCommentController::class, 'store'])
+        ->name('destination.comments.store');
+    Route::put('/destinasi/comments/{comment}', [DestinationCommentController::class, 'update'])
+        ->name('destination.comments.update');
+    Route::delete('/destinasi/comments/{comment}', [DestinationCommentController::class, 'destroy'])
+        ->name('destination.comments.destroy');
+    Route::post('/destinasi/{destination}/rating', [DestinationRatingController::class, 'store'])
+        ->name('destination.rating.store');
 });
 
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {

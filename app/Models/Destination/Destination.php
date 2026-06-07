@@ -23,9 +23,9 @@ class Destination extends Model
     ];
 
     protected $casts = [
-        'categories' => 'array', 
-        'rating'     => 'float',
-        'banned'     => 'boolean',
+        'categories'   => 'array',
+        'rating'       => 'float',
+        'banned'       => 'boolean',
     ];
 
     public function author()
@@ -36,5 +36,30 @@ class Destination extends Model
     public function links()
     {
         return $this->hasMany(DestinationLink::class)->orderBy('sort_order');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(DestinationComment::class)
+                    ->whereNull('parent_id')
+                    ->with(['user', 'replies.user'])
+                    ->orderBy('created_at', 'desc');
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(DestinationRating::class);
+    }
+
+    public function recalculateRating(): void
+    {
+        $ratings = $this->ratings();
+        $count   = $ratings->count();
+        $avg     = $count > 0 ? round($ratings->avg('score'), 1) : 0;
+
+        $this->update([
+            'rating'       => $avg,
+            'rating_count' => $count,
+        ]);
     }
 }
