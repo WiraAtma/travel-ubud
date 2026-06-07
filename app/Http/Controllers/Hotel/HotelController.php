@@ -17,7 +17,7 @@ class HotelController extends Controller
     {
         preg_match_all('/<img[^>]+src=["\']([^"\']+)["\']/', $content, $matches);
         foreach ($matches[1] as $url) {
-            if (str_contains($url, '/storage/hotels/content-images/')) {
+            if (str_contains($url, 'hotels/content-images/')) {
                 Storage::disk('public')->delete('hotels/content-images/' . basename($url));
             }
         }
@@ -236,6 +236,21 @@ class HotelController extends Controller
                 $imagePath = $request->file('image_cover')->store('hotels/covers', 'public');
             }
 
+            //  Hapus gambar Summernote lama jika konten berubah
+            if ($hotel->description !== $request->description) {
+                preg_match_all('/<img[^>]+src=["\']([^"\']+)["\']/', $hotel->description ?? '', $oldMatches);
+                preg_match_all('/<img[^>]+src=["\']([^"\']+)["\']/', $request->description ?? '', $newMatches);
+
+                $oldImages = $oldMatches[1] ?? [];
+                $newImages = $newMatches[1] ?? [];
+
+                foreach ($oldImages as $url) {
+                    if (!in_array($url, $newImages) && str_contains($url, 'hotels/content-images/')) {
+                        Storage::disk('public')->delete('hotels/content-images/' . basename($url));
+                    }
+                }
+            }
+
             $hotel->update([
                 'name'          => $request->name,
                 'address'       => $request->address,
@@ -368,7 +383,9 @@ class HotelController extends Controller
 
         $path = $request->file('file')->store('hotels/content-images', 'public');
 
-        return response()->json(['url' => asset('storage/' . $path)]);
+        return response()->json([
+            'url' => '/storage/' . $path
+        ]);
     }
 
     // -------------------------------------------------------

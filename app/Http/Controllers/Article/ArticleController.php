@@ -13,12 +13,10 @@ class ArticleController extends Controller
     // Hapus semua gambar konten dari HTML
     private function deleteContentImages(string $content): void
     {
-        // Ambil semua src gambar dari tag <img> dalam konten
         preg_match_all('/<img[^>]+src=["\']([^"\']+)["\']/', $content, $matches);
 
         foreach ($matches[1] as $url) {
-            // Hanya hapus gambar yang disimpan lokal (storage)
-            if (str_contains($url, '/storage/articles/content-images/')) {
+            if (str_contains($url, 'articles/content-images/')) {
                 $path = 'articles/content-images/' . basename($url);
                 Storage::disk('public')->delete($path);
             }
@@ -138,7 +136,7 @@ class ArticleController extends Controller
 
             // Hapus gambar yang sudah tidak ada di konten baru
             foreach ($oldImages as $url) {
-                if (!in_array($url, $newImages) && str_contains($url, '/storage/articles/content-images/')) {
+                if (!in_array($url, $newImages) && str_contains($url, 'articles/content-images/')) {
                     $path = 'articles/content-images/' . basename($url);
                     Storage::disk('public')->delete($path);
                 }
@@ -192,7 +190,7 @@ class ArticleController extends Controller
         $path = $request->file('file')->store('articles/content-images', 'public');
 
         return response()->json([
-            'url' => asset('storage/' . $path),
+            'url' => '/storage/' . $path,
         ]);
     }
 

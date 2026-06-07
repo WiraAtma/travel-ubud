@@ -32,7 +32,8 @@ class RestaurantController extends Controller
         preg_match_all('/<img[^>]+src=["\']([^"\']+)["\']/', $content, $matches);
         foreach ($matches[1] as $url) {
             if (str_contains($url, '/storage/restaurants/content-images/')) {
-                Storage::disk('public')->delete('restaurants/content-images/' . basename($url));
+                $path = 'restaurants/content-images/' . basename($url);
+                Storage::disk('public')->delete($path);
             }
         }
     }
@@ -239,7 +240,8 @@ class RestaurantController extends Controller
 
         DB::transaction(function () use ($request, $restaurant) {
 
-            // Update cover restoran
+            $this->syncContentImages($restaurant->description ?? '', $request->description);
+
             $imagePath = $restaurant->image_cover;
             if ($request->hasFile('image_cover')) {
                 if ($imagePath) Storage::disk('public')->delete($imagePath);
@@ -402,7 +404,7 @@ class RestaurantController extends Controller
         $path = $request->file('file')->store('restaurants/content-images', 'public');
 
         return response()->json([
-            'url' => asset('storage/' . $path),
+            'url' => '/storage/' . $path,
         ]);
     }
 
@@ -427,5 +429,25 @@ class RestaurantController extends Controller
 
         $restaurant->update(['banned' => false]);
         return redirect()->back()->with('success', 'Restoran berhasil diunban!');
+    }
+
+    private function syncContentImages(string $oldContent, string $newContent): void
+    {
+        // Ambil semua URL gambar dari konten lama
+        preg_match_all('/<img[^>]+src=["\']([^"\']+)["\']/', $oldContent, $oldMatches);
+        // Ambil semua URL gambar dari konten baru
+        preg_match_all('/<img[^>]+src=["\']([^"\']+)["\']/', $newContent, $newMatches);
+
+        $oldUrls = $oldMatches[1];
+        $newUrls = $newMatches[2] ?? $newMatches[1]; 
+
+        // Cari gambar yang ada di konten lama tapi sudah tidak ada di konten baru
+        $deletedUrls = array_diff($oldUrls, $newUrls);
+
+        foreach ($deletedUrls as $url) {
+            if (str_contains($url, '/storage/restaurants/content-images/')) {
+                Storage::disk('public')->delete('restaurants/content-images/' . basename($url));
+            }
+        }
     }
 }

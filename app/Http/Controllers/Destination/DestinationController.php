@@ -23,7 +23,7 @@ class DestinationController extends Controller
         preg_match_all('/<img[^>]+src=["\']([^"\']+)["\']/', $content, $matches);
 
         foreach ($matches[1] as $url) {
-            if (str_contains($url, '/storage/destinations/content-images/')) {
+            if (str_contains($url, 'destinations/content-images/')) {
                 $path = 'destinations/content-images/' . basename($url);
                 Storage::disk('public')->delete($path);
             }
@@ -219,7 +219,7 @@ class DestinationController extends Controller
             $newImages = $newMatches[1] ?? [];
 
             foreach ($oldImages as $url) {
-                if (!in_array($url, $newImages) && str_contains($url, '/storage/destinations/content-images/')) {
+                if (!in_array($url, $newImages) && str_contains($url, 'destinations/content-images/')) {
                     Storage::disk('public')->delete('destinations/content-images/' . basename($url));
                 }
             }
@@ -325,7 +325,7 @@ class DestinationController extends Controller
         $path = $request->file('file')->store('destinations/content-images', 'public');
 
         return response()->json([
-            'url' => asset('storage/' . $path),
+            'url' => '/storage/' . $path,
         ]);
     }
 
