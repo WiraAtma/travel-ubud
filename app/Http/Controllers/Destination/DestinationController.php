@@ -45,6 +45,17 @@ class DestinationController extends Controller
         return view('features.admin.list-destination-admin', compact('destinations'));
     }
 
+    public function detail(Destination $destination)
+    {
+        if ($destination->banned) {
+            abort(404);
+        }
+
+        $destination->load('links', 'author');
+
+        return view('features.detail.destinasi-detail', compact('destination'));
+    }
+
     public function page(Request $request)
     {
         $search = $request->query('search');

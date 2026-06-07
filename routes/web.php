@@ -14,6 +14,8 @@ use App\Http\Controllers\Restaurant\RestaurantController;
 
     Route::prefix('/')->group(function () {
     Route::get('destinasi', [DestinationController::class, 'page'])->name('destinasi');
+    Route::get('destinasi/{destination}', [DestinationController::class, 'detail'])->name('destinations.detail');
+
 
     Route::view('article', 'features.dashboard.article-dashboard')
         ->name('article');
