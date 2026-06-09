@@ -119,31 +119,38 @@
                                     </a>
                                 </li>
                                 @endif
-                                @endauth
                                 <li>
                                     <a href="/admin/article" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                                         <i class="bi bi-file-earmark-text-fill"></i>
                                         <span class="flex-1 ms-3 whitespace-nowrap">Kelola Artikel</span>
                                     </a>
                                 </li>
+
+                                @if((auth()->user()->role === 'company' && auth()->user()->company_role === 'destination') || (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin'))
                                 <li>
                                     <a href="/admin/destination" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                                         <i class="bi bi-backpack2-fill"></i>
                                         <span class="flex-1 ms-3 whitespace-nowrap">Kelola Destinasi</span>
                                     </a>
                                 </li>
+                                @endif
+                                @if((auth()->user()->role === 'company' && auth()->user()->company_role === 'restaurant') || (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin'))
                                 <li>
                                     <a href="/admin/restaurant" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                                         <i class="bi bi-fork-knife"></i>
                                         <span class="flex-1 ms-3 whitespace-nowrap">Kelola Restoran</span>
                                     </a>
                                 </li>
+                                @endif
+                                @if((auth()->user()->role === 'company' && auth()->user()->company_role === 'hotel') || (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin'))
                                 <li>
                                     <a href="/admin/hotel" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                                         <i class="bi bi-buildings-fill"></i>
                                         <span class="flex-1 ms-3 whitespace-nowrap">Kelola Hotel</span>
                                     </a>
                                 </li>
+                                @endif
+                            @endauth
                         </ul>
                     </div>
                 </aside>
