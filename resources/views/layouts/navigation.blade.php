@@ -40,18 +40,18 @@
                         {{ __('Hotel') }}
                     </x-nav-link>
                 </div>
-            @auth
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('admin')" :active="request()->routeIs('admin')">
-                        {{ __('Admin') }}
+                    <x-nav-link :href="route('about-us')" :active="request()->routeIs('about-us')">
+                        {{ __('Tentang Kami') }}
                     </x-nav-link>
                 </div>
-            @endauth
-            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                <x-nav-link :href="route('about-us')" :active="request()->routeIs('about-us')">
-                    {{ __('Tentang Kami') }}
-                </x-nav-link>
-            </div>
+                @auth
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('admin')" :active="request()->routeIs('admin')">
+                            {{ __('Admin') }}
+                        </x-nav-link>
+                    </div>
+                @endauth
             </div>
 
             <!-- Settings Dropdown (Auth) / Login & Register (Guest) -->
@@ -122,6 +122,9 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('/')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('article')" :active="request()->routeIs('/')">
+                {{ __('Artikel') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('destinasi')" :active="request()->routeIs('destinasi')">
                 {{ __('Destinasi') }}
