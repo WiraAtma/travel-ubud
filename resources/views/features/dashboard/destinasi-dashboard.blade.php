@@ -165,6 +165,7 @@
                 <i class="bi bi-plus-lg text-xl"></i>
                 <span class="font-semibold">Buat Destinasi</span>
             </a>
+            @endif
         @endauth
 
         </section>
