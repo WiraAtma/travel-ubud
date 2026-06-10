@@ -83,19 +83,20 @@
   
           {{-- Tabel --}}
           <div class="overflow-x-auto">
-              <table class="w-full text-sm text-left">
-                  <thead class="bg-gray-50 text-gray-500 uppercase text-xs tracking-wider">
-                      <tr>
-                          <th class="px-6 py-4 font-medium w-14">No</th>
-                          <th class="px-6 py-4 font-medium">Cover</th>
-                          <th class="px-6 py-4 font-medium">Judul</th>
-                          <th class="px-6 py-4 font-medium">Author</th>
-                          <th class="px-6 py-4 font-medium">Tanggal Dibuat</th>
-                          <th class="px-6 py-4 font-medium">Terakhir Update</th>
-                          <th class="px-6 py-4 font-medium text-center">Aksi</th>
-                      </tr>
-                  </thead>
-                  <tbody class="divide-y divide-gray-100">
+              <div class="min-w-full inline-block align-middle">
+                  <table class="min-w-full divide-y divide-gray-200">
+                      <thead class="bg-gray-50 text-gray-500 uppercase text-xs tracking-wider">
+                          <tr>
+                              <th class="px-6 py-4 font-medium w-14">No</th>
+                              <th class="px-6 py-4 font-medium">Cover</th>
+                              <th class="px-6 py-4 font-medium">Judul</th>
+                              <th class="px-6 py-4 font-medium">Author</th>
+                              <th class="px-6 py-4 font-medium">Tanggal Dibuat</th>
+                              <th class="px-6 py-4 font-medium">Terakhir Update</th>
+                              <th class="px-6 py-4 font-medium text-center">Aksi</th>
+                          </tr>
+                      </thead>
+                      <tbody class="divide-y divide-gray-100">
                       @forelse ($articles as $index => $article)
                           <tr class="hover:bg-gray-50 transition-colors duration-150">
 
