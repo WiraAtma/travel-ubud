@@ -30,8 +30,9 @@ class DestinationCommentController extends BaseController
             'body'           => $request->body,
         ]);
 
-        return redirect()
-            ->route('destinations.detail', $destination->id)
+        $anchor = $request->parent_id ? '#comment-' . $request->parent_id : '#comments';
+
+        return redirect(route('destinations.detail', $destination->id) . $anchor)
             ->with('success', 'Komentar berhasil ditambahkan!');
     }
 
@@ -46,8 +47,7 @@ class DestinationCommentController extends BaseController
 
         $comment->update(['body' => $request->body]);
 
-        return redirect()
-            ->route('destinations.detail', $comment->destination_id)
+        return redirect(route('destinations.detail', $comment->destination_id) . '#comment-' . $comment->id)
             ->with('success', 'Komentar berhasil diperbarui!');
     }
 
@@ -61,8 +61,7 @@ class DestinationCommentController extends BaseController
 
         $comment->delete();
 
-        return redirect()
-            ->route('destinations.detail', $comment->destination_id)
+        return redirect(route('destinations.detail', $comment->destination_id) . '#comments')
             ->with('success', 'Komentar berhasil dihapus!');
     }
 }

@@ -27,8 +27,7 @@ class DestinationRatingController extends BaseController
 
         $destination->recalculateRating();
 
-        return redirect()
-            ->route('destinations.detail', $destination->id)
+        return redirect(route('destinations.detail', $destination->id) . '#rating-section')
             ->with('success', 'Rating berhasil disimpan!');
     }
 }

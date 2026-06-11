@@ -6,13 +6,14 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Article\ArticleController;
 use App\Http\Controllers\Company\CompanyRequestController;
+use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Destination\DestinationController;
 use App\Http\Controllers\Destination\DestinationCommentController;
 use App\Http\Controllers\Destination\DestinationRatingController;
 use App\Http\Controllers\Hotel\HotelController;
 use App\Http\Controllers\Restaurant\RestaurantController;
 
-    Route::view('/', 'dashboard')->name('home');
+    Route::get('/', [DashboardController::class, 'index'])->name('home');
 
     Route::prefix('/')->group(function () {
     Route::get('destinasi', [DestinationController::class, 'page'])->name('destinasi');

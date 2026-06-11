@@ -143,82 +143,37 @@
             </p>
         </div>
 
-        {{-- Cards destinasi: GRID responsive, no overflow --}}
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pb-12">
-
-            <div class="rounded-2xl overflow-hidden shadow-sm border border-gray-100" data-reveal="zoom-in" data-delay="100">
-                <a class="no-underline text-gray-900 block" href="../tugas-uts-pweb/pages/information-monkey-forest.php">
-                    <img 
-                        class="w-full object-cover" 
-                        style="height: 160px;"
-                        src="https://ubudtourism.com/wp-content/uploads/elementor/thumbs/Sacred-monkey-forest-sanctuary-ubud-bali-15-qpr03cilrefvjb4s945fxfkwzykhvheh78tzbein0g.jpg" 
-                        alt="monkey-forest-ubud"
-                    >
-                    <div class="p-3">
-                        <h6 class="font-bold mb-1 text-sm">Monkey Forest</h6>
-                        <p class="text-gray-500 mb-0 text-xs">
-                            <i class="bi bi-geo-alt me-1"></i>Ubud, Bali
-                        </p>
-                    </div>
-                </a>
-            </div>
-
-            <div class="rounded-2xl overflow-hidden shadow-sm border border-gray-100" data-reveal="zoom-in" data-delay="200">
-                <a class="no-underline text-gray-900 block" href="../tugas-uts-pweb/pages/information-art-market.php">
-                    <img 
-                        class="w-full object-cover" 
-                        style="height: 160px;"
-                        src="https://ubudtourism.com/wp-content/uploads/elementor/thumbs/Ubud-bali-art-market-qprxt4hwyq0do21xn9z96n1vz20kgz0hqvuvtgu680.jpg" 
-                        alt="art-market"
-                    >
-                    <div class="p-3">
-                        <h6 class="font-bold mb-1 text-sm">Art Market Ubud</h6>
-                        <p class="text-gray-500 mb-0 text-xs">
-                            <i class="bi bi-geo-alt me-1"></i>Ubud, Bali
-                        </p>
-                    </div>
-                </a>
-            </div>
-
-            <div class="rounded-2xl overflow-hidden shadow-sm border border-gray-100" data-reveal="zoom-in" data-delay="300">
-                <a class="no-underline text-gray-900 block" href="../tugas-uts-pweb/pages/information-ubud-palace.php">
-                    <img 
-                        class="w-full object-cover" 
-                        style="height: 160px;"
-                        src="https://ubudtourism.com/wp-content/uploads/elementor/thumbs/water-palace-ubud-bali-qpry8y440bo53r2j94765nb7yk101jttx774n5dlhc.jpg" 
-                        alt="ubud-palace"
-                    >
-                    <div class="p-3">
-                        <h6 class="font-bold mb-1 text-sm">Ubud Palace</h6>
-                        <p class="text-gray-500 mb-0 text-xs">
-                            <i class="bi bi-geo-alt me-1"></i>Ubud, Bali
-                        </p>
-                    </div>
-                </a>
-            </div>
-
-            <div class="rounded-2xl overflow-hidden shadow-sm border border-gray-100" data-reveal="zoom-in" data-delay="400">
-                <a class="no-underline text-gray-900 block" href="../tugas-uts-pweb/pages/information-tirta-empul-temple.php">
-                    <img 
-                        class="w-full object-cover" 
-                        style="height: 160px;"
-                        src="https://ubudtourism.com/wp-content/uploads/elementor/thumbs/Tirta-Empul-Temple-ubud-bali-guide-qps18vwwtffibqa6yruvheqrpg0dyac6rg4el1c2yo.jpg" 
-                        alt="tirta-empul"
-                    >
-                    <div class="p-3">
-                        <h6 class="font-bold mb-1 text-sm">Tirta Empul Temple</h6>
-                        <p class="text-gray-500 mb-0 text-xs">
-                            <i class="bi bi-geo-alt me-1"></i>Ubud, Bali
-                        </p>
-                    </div>
-                </a>
-            </div>
-
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            @foreach ($topDestinations as $top)
+                <div class="rounded-2xl overflow-hidden shadow-sm border border-gray-100" 
+                    data-reveal="zoom-in" 
+                    data-delay="{{ $loop->index * 100 + 100 }}">
+                    <a class="no-underline text-gray-900 block" 
+                    href="{{ route('destinations.detail', $top->id) }}">
+                        <img 
+                            class="w-full object-cover" 
+                            style="height: 160px;"
+                            src="{{ $top->image_cover ? asset('storage/' . $top->image_cover) : 'https://placehold.co/600x400?text=No+Image' }}"
+                            alt="{{ $top->title }}"
+                        >
+                        <div class="p-3">
+                            <h6 class="font-bold mb-1 text-sm">{{ $top->title }}</h6>
+                            <p class="text-gray-500 mb-0 text-xs">
+                                <i class="bi bi-geo-alt me-1"></i>{{ $top->location }}
+                            </p>
+                            <p class="text-yellow-500 text-xs mt-1 mb-0">
+                                ★ {{ number_format($top->rating, 1) }}
+                                <span class="text-gray-400">({{ $top->rating_count }})</span>
+                            </p>
+                        </div>
+                    </a>
+                </div>
+            @endforeach
         </div>
     </section>
 
     <section class="wrapper">
-        <div class="py-12">
+        <div class="py-3">
             {{-- Heading --}}
             <h2 style="font-size: clamp(28px, 5vw, 48px); margin-bottom: 2rem;" data-reveal="fade-up">
                 Amazing views of <span class="font-bold underline">Ubud</span>

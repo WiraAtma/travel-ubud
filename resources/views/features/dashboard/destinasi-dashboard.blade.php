@@ -26,7 +26,7 @@
 
         {{-- ── TOP DESTINATIONS ── --}}
         <section class="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-            <div class="mb-8 sm:mb-12">
+            <div class="mb-8 sm:mb-12" data-reveal="fade-up">
                 <p class="text-gray-500 mb-1 text-sm">Top Pilihan</p>
                 <h2 class="text-3xl sm:text-5xl font-semibold text-gray-900 leading-tight mb-2 sm:mb-4">
                     5 Wisata Terbaik di Ubud
@@ -42,7 +42,9 @@
                     <a href="{{ route('destinations.detail', $top->id) }}"
                        class="top-dest-item no-underline text-gray-900
                               bg-white rounded-2xl overflow-hidden hover:shadow-xl
-                              active:scale-[0.98] transition duration-300">
+                              active:scale-[0.98] transition duration-300"
+                       data-reveal="zoom-in"
+                       data-delay="{{ ($loop->index % 5) * 100 + 100 }}">
                         <div class="top-dest-img-wrap">
                             <img
                                 src="{{ $top->image_cover ? asset('storage/' . $top->image_cover) : 'https://placehold.co/600x400?text=No+Image' }}"
@@ -71,7 +73,7 @@
 
         {{-- ── ALL DESTINATIONS ── --}}
         <section id="list-destinasi" class="max-w-7xl mx-auto px-4 sm:px-6 pb-16 sm:pb-20">
-            <div class="mb-7 sm:mb-10">
+            <div class="mb-7 sm:mb-10" data-reveal="fade-up">
                 <p class="text-gray-500 mb-1 text-sm">Semua Destinasi</p>
                 <h2 class="text-3xl sm:text-5xl font-semibold text-gray-900 mb-5 sm:mb-6">
                     Jelajahi Semua Tempat di Ubud
@@ -99,13 +101,13 @@
                 @forelse ($destinations as $destination)
                     <a href="{{ route('destinations.detail', $destination->id) }}"
                        class="text-inherit no-underline active:scale-[0.99] transition"
-                       style="text-decoration: none; color: inherit;">
+                       style="text-decoration: none; color: inherit;"
+                       data-reveal="fade-up"
+                       data-delay="{{ ($loop->index % 2) * 100 + 100 }}">
 
-                        {{-- Card: auto height agar konten tidak terpotong --}}
                         <div class="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-sm hover:shadow-md
                                     transition duration-300 flex flex-row dest-card">
 
-                            {{-- Thumbnail: fixed width, height mengikuti card --}}
                             <div class="dest-thumb flex-shrink-0">
                                 <img
                                     src="{{ $destination->image_cover ? asset('storage/' . $destination->image_cover) : 'https://placehold.co/220x160?text=No+Image' }}"
@@ -114,7 +116,6 @@
                                 >
                             </div>
 
-                            {{-- Info: padding cukup, tidak ada fixed height --}}
                             <div class="flex flex-col justify-center px-3 sm:px-5 py-4 overflow-hidden flex-1 min-w-0">
                                 <h5 class="font-bold text-gray-900 mb-1 text-sm sm:text-base truncate">
                                     {{ $destination->title }}
@@ -158,22 +159,21 @@
                 </div>
             @endif
 
-        @auth
-            @if(auth()->user()->role  == 'company' && auth()->user()->company_role == 'destination')
-            <a href="{{ url('/admin/destination/create') }}" 
-               class="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 no-underline hover:text-white">               
-                <i class="bi bi-plus-lg text-xl"></i>
-                <span class="font-semibold">Buat Destinasi</span>
-            </a>
-            @endif
-        @endauth
+            @auth
+                @if(auth()->user()->role == 'company' && auth()->user()->company_role == 'destination')
+                <a href="{{ url('/admin/destination/create') }}"
+                   class="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 no-underline hover:text-white">
+                    <i class="bi bi-plus-lg text-xl"></i>
+                    <span class="font-semibold">Buat Destinasi</span>
+                </a>
+                @endif
+            @endauth
 
         </section>
 
     </section>
 
     <style>
-        /* ── TOP DESTINATIONS: horizontal scroll di mobile, semua 5 muncul ── */
         .top-dest-scroll {
             display: flex;
             gap: 12px;
@@ -185,7 +185,7 @@
         .top-dest-scroll::-webkit-scrollbar { display: none; }
 
         .top-dest-item {
-            flex: 0 0 calc((100% - 48px) / 5); /* 5 items pas dalam 1 baris */
+            flex: 0 0 calc((100% - 48px) / 5);
             min-width: 130px;
         }
 
@@ -194,7 +194,6 @@
             overflow: hidden;
         }
 
-        /* Desktop: override jadi grid */
         @media (min-width: 640px) {
             .top-dest-scroll {
                 display: grid;
@@ -220,8 +219,6 @@
             }
         }
 
-        /* ── DESTINATION LIST CARD ── */
-        /* Tidak ada fixed height — biarkan konten menentukan tinggi */
         .dest-card {
             min-height: 110px;
         }

@@ -313,6 +313,13 @@
             });
         @endif
 
+        if (window.location.hash) {
+            setTimeout(() => {
+                const el = document.querySelector(window.location.hash);
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
         // ── Star rating hover ──
         const labels = document.querySelectorAll('#star-rating .star-label');
         labels.forEach((label, idx) => {
