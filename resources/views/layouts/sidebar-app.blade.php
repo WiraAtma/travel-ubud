@@ -155,7 +155,7 @@
                     </div>
                 </aside>
 
-                <main class="flex-1 p-4">
+                <main class="px-4" style="width: 100%; overflow-x: auto;">
                     {{ $slot }}
                 </main>
             </div>
