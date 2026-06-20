@@ -75,6 +75,26 @@ class RestaurantController extends Controller
         return view('features.admin.list-restaurant-admin', compact('restaurants'));
     }
 
+    public function detail(Restaurant $restaurant)
+    {
+        if ($restaurant->banned) {
+            abort(404);
+        }
+
+        $restaurant->load('menus', 'links', 'author');
+
+        $comments = $restaurant->comments()->get();
+
+        $userRating = null;
+        if (Auth::check()) {
+            $userRating = \App\Models\Restaurant\RestaurantRating::where('restaurant_id', $restaurant->id)
+                ->where('user_id', Auth::id())
+                ->value('score');
+        }
+
+        return view('features.detail.restaurant.restaurant-detail', compact('restaurant', 'comments', 'userRating'));
+    }
+
     // -------------------------------------------------------
     // Form create
     // -------------------------------------------------------

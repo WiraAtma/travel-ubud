@@ -13,7 +13,9 @@ use App\Http\Controllers\Destination\DestinationRatingController;
 use App\Http\Controllers\Hotel\HotelCommentController;
 use App\Http\Controllers\Hotel\HotelController;
 use App\Http\Controllers\Hotel\HotelRatingController;
+use App\Http\Controllers\Restaurant\RestaurantCommentController;
 use App\Http\Controllers\Restaurant\RestaurantController;
+use App\Http\Controllers\Restaurant\RestaurantRatingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +33,7 @@ Route::view('article', 'features.dashboard.article-dashboard')->name('article');
 Route::view('galeri', 'features.dashboard.galeri-dashboard')->name('galeri');
 
 Route::view('restoran', 'features.dashboard.restoran-dashboard')->name('restoran');
+Route::get('restoran/{restaurant}', [RestaurantController::class, 'detail'])->name('restaurants.detail');
 
 Route::view('hotel', 'features.dashboard.hotel-dashboard')->name('hotel');
 Route::get('hotel/{hotel}', [HotelController::class, 'detail'])->name('hotels.detail');
@@ -70,6 +73,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('hotel.comments.destroy');
     Route::post('/hotel/{hotel}/rating', [HotelRatingController::class, 'store'])
         ->name('hotel.rating.store');
+
+    // Restaurant Comment and Rating
+    Route::post('/restoran/{restaurant}/comments', [RestaurantCommentController::class, 'store'])
+        ->name('restaurant.comments.store');
+    Route::put('/restoran/comments/{comment}', [RestaurantCommentController::class, 'update'])
+        ->name('restaurant.comments.update');
+    Route::delete('/restoran/comments/{comment}', [RestaurantCommentController::class, 'destroy'])
+        ->name('restaurant.comments.destroy');
+    Route::post('/restoran/{restaurant}/rating', [RestaurantRatingController::class, 'store'])
+        ->name('restaurant.rating.store');
 });
 
 /*
