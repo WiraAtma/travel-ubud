@@ -60,6 +60,26 @@ class HotelController extends Controller
         return view('features.admin.list-hotel-admin', compact('hotels'));
     }
 
+    public function detail(Hotel $hotel)
+    {
+        if ($hotel->banned) {
+            abort(404);
+        }
+
+        $hotel->load('rooms', 'links', 'author');
+
+        $comments = $hotel->comments()->get();
+
+        $userRating = null;
+        if (Auth::check()) {
+            $userRating = \App\Models\Hotel\HotelRating::where('hotel_id', $hotel->id)
+                ->where('user_id', Auth::id())
+                ->value('score');
+        }
+
+        return view('features.detail.hotel.hotel-detail', compact('hotel', 'comments', 'userRating'));
+    }
+
     // -------------------------------------------------------
     // Form create
     // -------------------------------------------------------

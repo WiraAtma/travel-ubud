@@ -10,41 +10,48 @@ use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Destination\DestinationController;
 use App\Http\Controllers\Destination\DestinationCommentController;
 use App\Http\Controllers\Destination\DestinationRatingController;
+use App\Http\Controllers\Hotel\HotelCommentController;
 use App\Http\Controllers\Hotel\HotelController;
+use App\Http\Controllers\Hotel\HotelRatingController;
 use App\Http\Controllers\Restaurant\RestaurantController;
 
-    Route::get('/', [DashboardController::class, 'index'])->name('home');
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
 
-    Route::prefix('/')->group(function () {
-    Route::get('destinasi', [DestinationController::class, 'page'])->name('destinasi');
-    Route::get('destinasi/{destination}', [DestinationController::class, 'detail'])->name('destinations.detail');
+Route::get('/', [DashboardController::class, 'index'])->name('home');
 
+Route::get('destinasi', [DestinationController::class, 'page'])->name('destinasi');
+Route::get('destinasi/{destination}', [DestinationController::class, 'detail'])->name('destinations.detail');
 
-    Route::view('article', 'features.dashboard.article-dashboard')
-        ->name('article');
+Route::view('article', 'features.dashboard.article-dashboard')->name('article');
 
-    Route::view('galeri', 'features.dashboard.galeri-dashboard')
-        ->name('galeri');
+Route::view('galeri', 'features.dashboard.galeri-dashboard')->name('galeri');
 
-    Route::view('restoran', 'features.dashboard.restoran-dashboard')
-        ->name('restoran');
+Route::view('restoran', 'features.dashboard.restoran-dashboard')->name('restoran');
 
-    Route::view('hotel', 'features.dashboard.hotel-dashboard')
-        ->name('hotel');
+Route::view('hotel', 'features.dashboard.hotel-dashboard')->name('hotel');
+Route::get('hotel/{hotel}', [HotelController::class, 'detail'])->name('hotels.detail');
 
-    Route::view('about-us', 'features.dashboard.about-us-dashboard')
-        ->name('about-us');
-});
+Route::view('about-us', 'features.dashboard.about-us-dashboard')->name('about-us');
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated User Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware(['auth', 'verified'])->group(function () {
+
+    // Company Request
     Route::post('/company-request', [CompanyRequestController::class, 'store'])
         ->name('company-request.store');
     Route::delete('/company-request/cancel', [CompanyRequestController::class, 'cancel'])
         ->name('company-request.cancel');
-});
 
-// ── Destination Comments & Rating ──
-Route::middleware(['auth', 'verified'])->group(function () {
+    // Destination Comments & Rating
     Route::post('/destinasi/{destination}/comments', [DestinationCommentController::class, 'store'])
         ->name('destination.comments.store');
     Route::put('/destinasi/comments/{comment}', [DestinationCommentController::class, 'update'])
@@ -53,18 +60,38 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('destination.comments.destroy');
     Route::post('/destinasi/{destination}/rating', [DestinationRatingController::class, 'store'])
         ->name('destination.rating.store');
+    
+    // Hotel Comment and Rating
+    Route::post('/hotel/{hotel}/comments', [HotelCommentController::class, 'store'])
+        ->name('hotel.comments.store');
+    Route::put('/hotel/comments/{comment}', [HotelCommentController::class, 'update'])
+        ->name('hotel.comments.update');
+    Route::delete('/hotel/comments/{comment}', [HotelCommentController::class, 'destroy'])
+        ->name('hotel.comments.destroy');
+    Route::post('/hotel/{hotel}/rating', [HotelRatingController::class, 'store'])
+        ->name('hotel.rating.store');
 });
 
-Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
-    Route::get('/request-company', [CompanyRequestController::class, 'index'])
-        ->name('admin.request-company');
-    Route::post('/request-company/{companyRequest}/approve', [CompanyRequestController::class, 'approve'])
-        ->name('admin.request-company.approve');
-    Route::post('/request-company/{companyRequest}/reject', [CompanyRequestController::class, 'reject'])
-        ->name('admin.request-company.reject');
-    Route::get('/request-company/{companyRequest}/proof', [CompanyRequestController::class, 'viewProof'])
-        ->name('admin.request-company.proof');
-});
+/*
+|--------------------------------------------------------------------------
+| Profile Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')
+    ->prefix('profile')
+    ->name('profile.')
+    ->group(function () {
+        Route::get('/', [ProfileController::class, 'edit'])->name('edit');
+        Route::patch('/', [ProfileController::class, 'update'])->name('update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
+    });
+
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware(['auth', 'verified'])
     ->prefix('admin')
@@ -72,170 +99,86 @@ Route::middleware(['auth', 'verified'])
 
         Route::view('/', 'admin')->name('admin');
 
-        Route::get('/list-user', [UserController::class, 'page'])
-            ->name('users.page');
+        // Company Request Management
+        Route::prefix('request-company')
+            ->name('admin.request-company.')
+            ->group(function () {
+                Route::get('/', [CompanyRequestController::class, 'index'])->name('index');
+                Route::post('/{companyRequest}/approve', [CompanyRequestController::class, 'approve'])->name('approve');
+                Route::post('/{companyRequest}/reject', [CompanyRequestController::class, 'reject'])->name('reject');
+                Route::get('/{companyRequest}/proof', [CompanyRequestController::class, 'viewProof'])->name('proof');
+            });
 
-        Route::view('/manage-post', 'features.admin.list-post-destinasi-dashboard')
-            ->name('manage-post');
+        // User Management
+        Route::get('/list-user', [UserController::class, 'page'])->name('users.page');
 
-        Route::view('/form-post', 'features.dashboard.form-post-dashboard')
-            ->name('form-post');
+        // Post Management (views)
+        Route::view('/manage-post', 'features.admin.list-post-destinasi-dashboard')->name('manage-post');
+        Route::view('/form-post', 'features.dashboard.form-post-dashboard')->name('form-post');
+        Route::view('/form-article', 'features.form.article.create-article')->name('form-article');
 
-        Route::view('/form-article', 'features.form.article.create-article')
-            ->name('form-article');
-
+        // Article Management
         Route::prefix('article')
             ->name('articles.')
             ->group(function () {
-
-                Route::get('/', [ArticleController::class, 'index'])
-                    ->name('index');
-
-                Route::get('/all', [ArticleController::class, 'getAll'])
-                    ->name('all');
-
-                Route::get('/create', [ArticleController::class, 'create'])
-                    ->name('create');
-
-                Route::post('/', [ArticleController::class, 'store'])
-                    ->name('store');
-
-                Route::post('/upload-image', [ArticleController::class, 'uploadImage'])
-                    ->name('upload-image');
-
-                Route::get('/{article}/edit', [ArticleController::class, 'edit'])
-                    ->name('edit');
-
-                Route::put('/{article}', [ArticleController::class, 'update'])
-                    ->name('update');
-
-                Route::delete('/{article}', [ArticleController::class, 'destroy'])
-                    ->name('destroy');
-
-                Route::post('/{article}/ban', [ArticleController::class, 'ban'])
-                    ->name('ban');
-
-                Route::post('/{article}/unban', [ArticleController::class, 'unban'])
-                    ->name('unban');
+                Route::get('/', [ArticleController::class, 'index'])->name('index');
+                Route::get('/all', [ArticleController::class, 'getAll'])->name('all');
+                Route::get('/create', [ArticleController::class, 'create'])->name('create');
+                Route::post('/', [ArticleController::class, 'store'])->name('store');
+                Route::post('/upload-image', [ArticleController::class, 'uploadImage'])->name('upload-image');
+                Route::get('/{article}/edit', [ArticleController::class, 'edit'])->name('edit');
+                Route::put('/{article}', [ArticleController::class, 'update'])->name('update');
+                Route::delete('/{article}', [ArticleController::class, 'destroy'])->name('destroy');
+                Route::post('/{article}/ban', [ArticleController::class, 'ban'])->name('ban');
+                Route::post('/{article}/unban', [ArticleController::class, 'unban'])->name('unban');
             });
 
+        // Destination Management
         Route::prefix('destination')
             ->name('destinations.')
             ->group(function () {
-
-                Route::get('/', [DestinationController::class, 'index'])
-                    ->name('index');
-
-                Route::get('/all', [DestinationController::class, 'getAll'])
-                    ->name('all');
-
-                Route::get('/create', [DestinationController::class, 'create'])
-                    ->name('create');
-
-                Route::post('/', [DestinationController::class, 'store'])
-                    ->name('store');
-
-                Route::post('/upload-image', [DestinationController::class, 'uploadImage'])
-                    ->name('upload-image');
-
-                Route::get('/{destination}/edit', [DestinationController::class, 'edit'])
-                    ->name('edit');
-
-                Route::put('/{destination}', [DestinationController::class, 'update'])
-                    ->name('update');
-
-                Route::delete('/{destination}', [DestinationController::class, 'destroy'])
-                    ->name('destroy');
-
-                Route::post('/{destination}/ban', [DestinationController::class, 'ban'])
-                    ->name('ban');
-
-                Route::post('/{destination}/unban', [DestinationController::class, 'unban'])
-                    ->name('unban');
+                Route::get('/', [DestinationController::class, 'index'])->name('index');
+                Route::get('/all', [DestinationController::class, 'getAll'])->name('all');
+                Route::get('/create', [DestinationController::class, 'create'])->name('create');
+                Route::post('/', [DestinationController::class, 'store'])->name('store');
+                Route::post('/upload-image', [DestinationController::class, 'uploadImage'])->name('upload-image');
+                Route::get('/{destination}/edit', [DestinationController::class, 'edit'])->name('edit');
+                Route::put('/{destination}', [DestinationController::class, 'update'])->name('update');
+                Route::delete('/{destination}', [DestinationController::class, 'destroy'])->name('destroy');
+                Route::post('/{destination}/ban', [DestinationController::class, 'ban'])->name('ban');
+                Route::post('/{destination}/unban', [DestinationController::class, 'unban'])->name('unban');
             });
-    });
 
-Route::middleware(['auth', 'verified'])->group(function () {
- 
-    Route::get('/admin/hotel', [HotelController::class, 'index'])
-        ->name('hotels.index');
- 
-    Route::get('/admin/hotel/all', [HotelController::class, 'getAll'])
-        ->name('hotels.all');
- 
-    Route::get('/admin/hotel/create', [HotelController::class, 'create'])
-        ->name('hotels.create');
- 
-    Route::post('/admin/hotel', [HotelController::class, 'store'])
-        ->name('hotels.store');
+        // Hotel Management
+        Route::prefix('hotel')
+            ->name('hotels.')
+            ->group(function () {
+                Route::get('/', [HotelController::class, 'index'])->name('index');
+                Route::get('/all', [HotelController::class, 'getAll'])->name('all');
+                Route::get('/create', [HotelController::class, 'create'])->name('create');
+                Route::post('/', [HotelController::class, 'store'])->name('store');
+                Route::post('/upload-image', [HotelController::class, 'uploadImage'])->name('upload-image');
+                Route::get('/{hotel}/edit', [HotelController::class, 'edit'])->name('edit');
+                Route::put('/{hotel}', [HotelController::class, 'update'])->name('update');
+                Route::delete('/{hotel}', [HotelController::class, 'destroy'])->name('destroy');
+                Route::post('/{hotel}/ban', [HotelController::class, 'ban'])->name('ban');
+                Route::post('/{hotel}/unban', [HotelController::class, 'unban'])->name('unban');
+            });
 
-    Route::post('/admin/hotel/upload-image', [HotelController::class, 'uploadImage'])
-        ->name('hotels.upload-image');
- 
-    Route::get('/admin/hotel/{hotel}/edit', [HotelController::class, 'edit'])
-        ->name('hotels.edit');
- 
-    Route::put('/admin/hotel/{hotel}', [HotelController::class, 'update'])
-        ->name('hotels.update');
- 
-    Route::delete('/admin/hotel/{hotel}', [HotelController::class, 'destroy'])
-        ->name('hotels.destroy');
- 
-    Route::post('/admin/hotel/{hotel}/ban', [HotelController::class, 'ban'])
-        ->name('hotels.ban');
- 
-    Route::post('/admin/hotel/{hotel}/unban', [HotelController::class, 'unban'])
-        ->name('hotels.unban');
- 
-});
-
-Route::middleware(['auth', 'verified'])->group(function () {
- 
-    Route::get('/admin/restaurant', [RestaurantController::class, 'index'])
-        ->name('restaurants.index');
- 
-    Route::get('/admin/restaurant/all', [RestaurantController::class, 'getAll'])
-        ->name('restaurants.all');
- 
-    Route::get('/admin/restaurant/create', [RestaurantController::class, 'create'])
-        ->name('restaurants.create');
- 
-    Route::post('/admin/restaurant', [RestaurantController::class, 'store'])
-        ->name('restaurants.store');
- 
-    Route::post('/admin/restaurant/upload-image', [RestaurantController::class, 'uploadImage'])
-        ->name('restaurants.upload-image');
- 
-    Route::get('/admin/restaurant/{restaurant}/edit', [RestaurantController::class, 'edit'])
-        ->name('restaurants.edit');
- 
-    Route::put('/admin/restaurant/{restaurant}', [RestaurantController::class, 'update'])
-        ->name('restaurants.update');
- 
-    Route::delete('/admin/restaurant/{restaurant}', [RestaurantController::class, 'destroy'])
-        ->name('restaurants.destroy');
- 
-    Route::post('/admin/restaurant/{restaurant}/ban', [RestaurantController::class, 'ban'])
-        ->name('restaurants.ban');
- 
-    Route::post('/admin/restaurant/{restaurant}/unban', [RestaurantController::class, 'unban'])
-        ->name('restaurants.unban');
- 
-});
-
-Route::middleware('auth')
-    ->prefix('profile')
-    ->name('profile.')
-    ->group(function () {
-
-        Route::get('/', [ProfileController::class, 'edit'])
-            ->name('edit');
-
-        Route::patch('/', [ProfileController::class, 'update'])
-            ->name('update');
-
-        Route::delete('/', [ProfileController::class, 'destroy'])
-            ->name('destroy');
+        Route::prefix('restaurant')
+            ->name('restaurants.')
+            ->group(function () {
+                Route::get('/', [RestaurantController::class, 'index'])->name('index');
+                Route::get('/all', [RestaurantController::class, 'getAll'])->name('all');
+                Route::get('/create', [RestaurantController::class, 'create'])->name('create');
+                Route::post('/', [RestaurantController::class, 'store'])->name('store');
+                Route::post('/upload-image', [RestaurantController::class, 'uploadImage'])->name('upload-image');
+                Route::get('/{restaurant}/edit', [RestaurantController::class, 'edit'])->name('edit');
+                Route::put('/{restaurant}', [RestaurantController::class, 'update'])->name('update');
+                Route::delete('/{restaurant}', [RestaurantController::class, 'destroy'])->name('destroy');
+                Route::post('/{restaurant}/ban', [RestaurantController::class, 'ban'])->name('ban');
+                Route::post('/{restaurant}/unban', [RestaurantController::class, 'unban'])->name('unban');
+            });
     });
 
 require __DIR__ . '/auth.php';
