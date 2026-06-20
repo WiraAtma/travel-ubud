@@ -16,6 +16,7 @@ use App\Http\Controllers\Hotel\HotelRatingController;
 use App\Http\Controllers\Restaurant\RestaurantCommentController;
 use App\Http\Controllers\Restaurant\RestaurantController;
 use App\Http\Controllers\Restaurant\RestaurantRatingController;
+use App\Http\Controllers\Article\ArticleCommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +30,7 @@ Route::get('destinasi', [DestinationController::class, 'page'])->name('destinasi
 Route::get('destinasi/{destination}', [DestinationController::class, 'detail'])->name('destinations.detail');
 
 Route::view('article', 'features.dashboard.article-dashboard')->name('article');
+Route::get('article/{article}', [ArticleController::class, 'detail'])->name('articles.detail');
 
 Route::view('galeri', 'features.dashboard.galeri-dashboard')->name('galeri');
 
@@ -83,6 +85,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('restaurant.comments.destroy');
     Route::post('/restoran/{restaurant}/rating', [RestaurantRatingController::class, 'store'])
         ->name('restaurant.rating.store');
+
+    // Article Comment (no rating)
+    Route::post('/article/{article}/comments', [ArticleCommentController::class, 'store'])
+        ->name('article.comments.store');
+    Route::put('/article/comments/{comment}', [ArticleCommentController::class, 'update'])
+        ->name('article.comments.update');
+    Route::delete('/article/comments/{comment}', [ArticleCommentController::class, 'destroy'])
+        ->name('article.comments.destroy');
 });
 
 /*

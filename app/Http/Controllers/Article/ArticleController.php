@@ -56,6 +56,18 @@ class ArticleController extends Controller
         return view('features.admin.list-article-admin', compact('articles'));
     }
 
+    public function detail(Article $article)
+    {
+        if ($article->banned) {
+            abort(404);
+        }
+
+        $article->load('author');
+
+        $comments = $article->comments()->get();
+
+        return view('features.detail.article.article-detail', compact('article', 'comments'));
+    }
 
     // Form create
     public function create()
