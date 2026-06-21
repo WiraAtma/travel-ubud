@@ -79,7 +79,26 @@ class HotelController extends Controller
 
         return view('features.detail.hotel.hotel-detail', compact('hotel', 'comments', 'userRating'));
     }
+    // -------------------------------------------------------
+// Public page - daftar semua hotel
+// -------------------------------------------------------
+public function page(Request $request)
+{
+    $search = $request->query('search');
 
+    $topHotels = Hotel::where('banned', false)
+        ->orderBy('rating', 'desc')
+        ->take(5)
+        ->get();
+
+    $hotels = Hotel::where('banned', false)
+        ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%"))
+        ->orderBy('created_at', 'desc')
+        ->paginate(10)
+        ->withQueryString();
+
+    return view('features.dashboard.hotel-dashboard', compact('hotels', 'topHotels'));
+}
     // -------------------------------------------------------
     // Form create
     // -------------------------------------------------------

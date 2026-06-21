@@ -37,7 +37,7 @@ Route::view('galeri', 'features.dashboard.galeri-dashboard')->name('galeri');
 Route::view('restoran', 'features.dashboard.restoran-dashboard')->name('restoran');
 Route::get('restoran/{restaurant}', [RestaurantController::class, 'detail'])->name('restaurants.detail');
 
-Route::view('hotel', 'features.dashboard.hotel-dashboard')->name('hotel');
+Route::get('hotel', [HotelController::class, 'page'])->name('hotel');
 Route::get('hotel/{hotel}', [HotelController::class, 'detail'])->name('hotels.detail');
 
 Route::view('about-us', 'features.dashboard.about-us-dashboard')->name('about-us');
