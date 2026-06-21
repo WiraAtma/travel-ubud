@@ -29,7 +29,7 @@ Route::get('/', [DashboardController::class, 'index'])->name('home');
 Route::get('destinasi', [DestinationController::class, 'page'])->name('destinasi');
 Route::get('destinasi/{destination}', [DestinationController::class, 'detail'])->name('destinations.detail');
 
-Route::view('article', 'features.dashboard.article-dashboard')->name('article');
+Route::get('article', [ArticleController::class, 'page'])->name('article');
 Route::get('article/{article}', [ArticleController::class, 'detail'])->name('articles.detail');
 
 Route::view('galeri', 'features.dashboard.galeri-dashboard')->name('galeri');

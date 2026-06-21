@@ -56,6 +56,27 @@ class ArticleController extends Controller
         return view('features.admin.list-article-admin', compact('articles'));
     }
 
+
+public function page(Request $request)
+{
+    $search = $request->query('search');
+
+    $topArticles = Article::with('author')
+        ->where('banned', false)
+        ->orderBy('created_at', 'desc')
+        ->limit(4)
+        ->get();
+
+    $articles = Article::with('author')
+        ->where('banned', false)
+        ->when($search, fn($q) => $q->where('title', 'like', "%{$search}%"))
+        ->orderBy('created_at', 'desc')
+        ->paginate(8)
+        ->withQueryString();
+
+    return view('features.dashboard.article-dashboard', compact('topArticles', 'articles', 'search'));
+}
+
     public function detail(Article $article)
     {
         if ($article->banned) {
