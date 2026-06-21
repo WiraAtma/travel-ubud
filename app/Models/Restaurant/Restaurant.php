@@ -40,7 +40,7 @@ class Restaurant extends Model
 
     public function menus()
     {
-        return $this->hasMany(RestaurantMenu::class);
+        return $this->hasMany(RestaurantMenu::class)->orderBy('category')->orderBy('name');
     }
 
     public function links()

@@ -95,6 +95,26 @@ class RestaurantController extends Controller
         return view('features.detail.restaurant.restaurant-detail', compact('restaurant', 'comments', 'userRating'));
     }
 
+public function page(Request $request)
+{
+    $search = $request->query('search');
+
+    $topRestaurants = Restaurant::where('banned', false)
+        ->orderBy('rating', 'desc')
+        ->orderBy('rating_count', 'desc')
+        ->limit(5)
+        ->get();
+
+    $restaurants = Restaurant::where('banned', false)
+        ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%")
+                                    ->orWhere('address', 'like', "%{$search}%"))
+        ->orderBy('created_at', 'desc')
+        ->paginate(10)
+        ->withQueryString();
+
+    return view('features.dashboard.restoran-dashboard', compact('topRestaurants', 'restaurants', 'search'));
+}
+
     // -------------------------------------------------------
     // Form create
     // -------------------------------------------------------
