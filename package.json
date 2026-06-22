@@ -10,7 +10,7 @@
         "dev:all": "concurrently \"php artisan serve\" \"vite\""
     },
     "engines": {
-    "node": "20.x"
+        "node": "20.x"
     },
     "devDependencies": {
         "@rollup/plugin-inject": "^5.0.5",
@@ -28,6 +28,7 @@
     "dependencies": {
         "@tailwindcss/typography": "^0.5.19",
         "bootstrap-icons": "^1.13.1",
+        "chart.js": "^4.5.1",
         "jquery": "^3.7.1",
         "summernote": "^0.9.1",
         "sweetalert2": "^11.26.25",

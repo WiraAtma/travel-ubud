@@ -17,6 +17,7 @@ use App\Http\Controllers\Restaurant\RestaurantCommentController;
 use App\Http\Controllers\Restaurant\RestaurantController;
 use App\Http\Controllers\Restaurant\RestaurantRatingController;
 use App\Http\Controllers\Article\ArticleCommentController;
+use App\Http\Controllers\Dashboard\AdminDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -120,7 +121,7 @@ Route::middleware(['auth', 'verified'])
     ->prefix('admin')
     ->group(function () {
 
-        Route::view('/', 'admin')->name('admin');
+        Route::get('/', [AdminDashboardController::class, 'index'])->name('admin');
 
         // Company Request Management
         Route::prefix('request-company')

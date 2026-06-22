@@ -32,7 +32,7 @@
             ];
         @endphp
         @foreach ($filters as $value => $label)
-            <a href="{{ route('admin.request-company', ['status' => $value]) }}"
+            <a href="{{ route('admin.request-company.index', ['status' => $value]) }}"
                class="px-4 py-1.5 rounded-full text-sm font-medium transition-colors duration-150
                       {{ $status === $value
                           ? 'bg-indigo-600 text-white'

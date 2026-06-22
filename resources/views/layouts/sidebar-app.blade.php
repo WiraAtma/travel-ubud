@@ -99,13 +99,13 @@
                     <div class="h-full px-3 py-4 overflow-y-auto">
                         <ul class="space-y-5 text-gray-600 font-medium">
                             @auth
-                              @if(auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin')
-                                <li>
-                                    <a href="/admin" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
-                                        <i class="bi bi-speedometer"></i>
-                                        <span class="ms-3">Dashboard</span>
-                                    </a>
-                                </li>
+                            <li>
+                                <a href="/admin" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+                                    <i class="bi bi-speedometer"></i>
+                                    <span class="ms-3">Dashboard</span>
+                                </a>
+                            </li>
+                            @if(auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin')
                                 <li>
                                     <a href="/admin/request-company" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                                         <i class="bi bi-building-fill-check"></i>
