@@ -351,7 +351,4 @@
             canCompanyReq:  {{ $canCompanyReq ? 'true' : 'false' }},
         };
     </script>
-
-    @vite(['resources/js/admin-dashboard.js'])
-
 </x-sidebar-app-layout>

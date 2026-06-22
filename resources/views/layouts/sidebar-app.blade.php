@@ -9,6 +9,7 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/js/admin-dashboard.js'])
 
         <link rel="stylesheet" href="{{ asset('vendor/summernote/summernote-lite.css') }}">
         <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
