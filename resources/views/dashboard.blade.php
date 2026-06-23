@@ -207,7 +207,7 @@
                     <p class="text-[16px] leading-loose mb-8">
                         Kota ini terkenal dengan sawah teraseringnya yang indah, hutan yang rimbun, dan sungai yang tenang. Sawah Terasering Tegallalang, dengan sawah bertingkat berwarna hijau zamrud, menawarkan pemandangan panorama yang menakjubkan dan wawasan tentang pertanian padi tradisional.
                     </p>
-                    <a href="/tugas-uts-pweb/pages/galeri.php"
+                    <a href={{ route('galeri') }}
                         class="inline-block border border-gray-900 text-gray-900 px-8 py-3 rounded-lg hover:bg-gray-900 hover:text-white transition-colors duration-200">
                         Lihat Galeri Lainnya
                     </a>

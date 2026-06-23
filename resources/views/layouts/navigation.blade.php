@@ -26,11 +26,6 @@
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('galeri')" :active="request()->routeIs('galeri')">
-                        {{ __('Galeri') }}
-                    </x-nav-link>
-                </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('restoran')" :active="request()->routeIs('restoran')">
                         {{ __('Restoran') }}
                     </x-nav-link>
@@ -38,6 +33,11 @@
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('hotel')" :active="request()->routeIs('hotel')">
                         {{ __('Hotel') }}
+                    </x-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('galeri')" :active="request()->routeIs('galeri')">
+                        {{ __('Galeri') }}
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
@@ -129,14 +129,14 @@
             <x-responsive-nav-link :href="route('destinasi')" :active="request()->routeIs('destinasi')">
                 {{ __('Destinasi') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('galeri')" :active="request()->routeIs('galeri')">
-                {{ __('Galeri') }}
-            </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('restoran')" :active="request()->routeIs('restoran')">
                 {{ __('Restoran') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('hotel')" :active="request()->routeIs('hotel')">
                 {{ __('Hotel') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('galeri')" :active="request()->routeIs('galeri')">
+                {{ __('Galeri') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('about-us')" :active="request()->routeIs('about-us')">
                 {{ __('Tentang Kami') }}
