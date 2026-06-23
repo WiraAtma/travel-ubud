@@ -182,6 +182,8 @@
                                         @endif
                                     @else
                                         @if ($restaurant->id_author === auth()->id())
+                                            <a href="{{ route('restaurants.detail', $restaurant) }}"
+                                            class="px-3 py-1.5 text-xs font-medium text-emerald-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">Detail</a>
                                             <a href="{{ route('restaurants.edit', $restaurant) }}"
                                             class="px-3 py-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">Edit</a>
                                             <form action="{{ route('restaurants.destroy', $restaurant) }}" method="POST" class="inline">

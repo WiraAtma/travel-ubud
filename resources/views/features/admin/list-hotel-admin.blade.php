@@ -186,6 +186,8 @@
                                         @endif
                                     @else
                                         @if ($hotel->id_author === auth()->id())
+                                            <a href="{{ route('hotels.detail', $hotel) }}"
+                                            class="px-3 py-1.5 text-xs font-medium text-emerald-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">Detail</a>
                                             <a href="{{ route('hotels.edit', $hotel) }}"
                                             class="px-3 py-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">
                                                 Edit

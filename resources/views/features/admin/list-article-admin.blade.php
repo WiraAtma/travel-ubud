@@ -5,7 +5,7 @@
       <div class="mb-8">
           <div class="flex items-center justify-between mb-4">
               <div>
-                  <h1 class="text-3xl font-bold text-gray-800">Kelola Post</h1>
+                  <h1 class="text-3xl font-bold text-gray-800">Kelola Artikel</h1>
                   <p class="text-gray-500 mt-1">
                       {{ request()->routeIs('articles.all') ? 'Daftar semua artikel yang telah dibuat oleh seluruh pengguna' : 'Daftar artikel yang Anda buat' }}
                   </p>
@@ -169,7 +169,9 @@
                                                 @endif
                                             @endif
                                         @else
-                                            @if ($article->id_author === auth()->id())
+                                        @if ($article->id_author === auth()->id())
+                                                <a href="{{ route('articles.detail', $article) }}"
+                                                class="px-3 py-1.5 text-xs font-medium text-emerald-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">Detail</a>
                                                 <a href="{{ route('articles.edit', $article) }}"
                                                 class="px-3 py-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">Edit</a>
                                                 <form action="{{ route('articles.destroy', $article) }}" method="POST" class="inline">

@@ -201,6 +201,8 @@
                                         @endif
                                     @else
                                         @if ($destination->id_author === auth()->id())
+                                                <a href="{{ route('destinations.detail', $destination) }}"
+                                                class="px-3 py-1.5 text-xs font-medium text-emerald-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">Detail</a>
                                             <a href="{{ route('destinations.edit', $destination) }}"
                                             class="px-3 py-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">Edit</a>
                                             <form action="{{ route('destinations.destroy', $destination) }}" method="POST" class="inline">
