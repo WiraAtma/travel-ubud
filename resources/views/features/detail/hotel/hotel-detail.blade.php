@@ -487,7 +487,7 @@
 
     <style>
         .summernote-content {
-            font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+            font-family: Arial, sans-serif;
             font-size: 15px; line-height: 1.75; color: #374151;
         }
         .summernote-content h1,.summernote-content h2,.summernote-content h3,.summernote-content h4 {
@@ -495,7 +495,10 @@
         }
         .summernote-content h1{font-size:1.75rem;}.summernote-content h2{font-size:1.375rem;}.summernote-content h3{font-size:1.125rem;}
         .summernote-content p{margin-bottom:1em;white-space:normal!important;}
-        .summernote-content span{font-family:inherit!important;white-space:normal!important;}
+        .summernote-content span {
+            font-family: Arial, sans-serif !important;
+            white-space: normal !important;
+        }
         .summernote-content img{max-width:100%!important;height:auto!important;border-radius:12px;margin:16px auto;display:block;}
         .summernote-content ul,.summernote-content ol{padding-left:1.5rem;margin-bottom:1em;}
         .summernote-content ul{list-style-type:disc;}.summernote-content ol{list-style-type:decimal;}
