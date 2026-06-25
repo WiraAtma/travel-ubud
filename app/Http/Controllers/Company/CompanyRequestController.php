@@ -135,12 +135,8 @@ class CompanyRequestController extends Controller
 
     public function viewProof(CompanyRequest $companyRequest)
     {
-        $path = storage_path('app/public/' . $companyRequest->proof_file);
-
-        if (!file_exists($path)) {
-            abort(404, 'File tidak ditemukan.');
-        }
-
-        return response()->file($path);
+        return redirect()->away(
+            Storage::disk('supabase')->url($companyRequest->proof_file)
+        );
     }
 }
