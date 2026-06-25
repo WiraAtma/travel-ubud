@@ -1,267 +1,160 @@
 <x-app-layout>
 
-<!-- HERO ABOUT -->
-    <section class="w-full relative" style="height: 450px;">
-
-    <!-- Background -->
-    <img
-        src="https://tse1.mm.bing.net/th/id/OIP.OdyKtISRGJ5tazllsigkGQHaEJ?cb=thfc1falcon2&w=714&h=400&rs=1&pid=ImgDetMain&o=7&rm=3"
-        alt="Tentang Kami"
-        class="absolute inset-0 w-full h-full object-cover">
-
-    <!-- Overlay -->
+{{-- HERO --}}
+<section class="relative overflow-hidden" style="height: 460px;">
+    <img src="https://static.mybalitrips.com/media/44391/332.jpg"
+         alt="Ubud" class="w-full h-full object-cover block">
     <div class="absolute inset-0 bg-black/40"></div>
-
-    <!-- Content -->
-    <div class="relative z-10 flex items-center justify-center h-full">
-
-        <div class="text-center text-white px-6">
-
-            <h1 class="text-5xl font-bold mb-5">
-                Ubud Travel
-            </h1>
-
-            <p class="max-w-3xl mx-auto text-lg leading-relaxed">
-                Mengenal lebih dekat Ubud Travel sebagai partner terbaik
-                untuk menjelajahi keindahan budaya, alam, kuliner,
-                dan destinasi wisata di Bali.
-            </p>
-
-        </div>
-
+    <div class="header-container header-text-content">
+        <p class="text-xs tracking-[0.2em] uppercase font-semibold text-gray-300 mb-3" data-reveal="fade-up">Tentang Kami</p>
+        <h1 class="font-black text-white leading-tight mb-4" style="font-size: clamp(32px, 5vw, 56px);" data-reveal="fade-up" data-delay="100">
+            Mengenal Ubud<br>Lebih Dalam
+        </h1>
+        <p class="text-white/85 max-w-lg leading-relaxed" style="font-size: clamp(14px, 2vw, 16px);" data-reveal="fade-up" data-delay="200">
+            Panduan digital terlengkap untuk wisatawan yang ingin menjelajahi restoran, destinasi, hotel, dan budaya Ubud.
+        </p>
     </div>
-
 </section>
 
-    <!-- PROFIL PERUSAHAAN -->
-    <section class="max-w-7xl mx-auto px-6 py-24">
-
-        <div class="grid md:grid-cols-2 gap-16 items-center">
-
-            <!-- TEKS -->
-            <div>
-
-                <span class="text-gray-600 font-semibold uppercase">
-                    Profil Perusahaan
-                </span>
-
-                <h2 class="text-4xl font-bold text-gray-800 mt-3 mb-6">
-                    Menjelajahi Bali Bersama Ubud Travel
-                </h2>
-
-                <p class="text-gray-600 leading-relaxed mb-5">
-                    Ubud Travel merupakan platform informasi wisata yang
-                    membantu wisatawan menemukan destinasi terbaik,
-                    restoran populer, hotel nyaman, serta berbagai
-                    aktivitas menarik di Bali.
-                </p>
-
-                <p class="text-gray-600 leading-relaxed">
-                    Kami hadir untuk memberikan informasi yang lengkap,
-                    akurat, dan mudah diakses sehingga setiap perjalanan
-                    menjadi pengalaman yang lebih menyenangkan dan berkesan.
-                </p>
-
-            </div>
-
-            <!-- GAMBAR -->
-            <div>
-                <img
-                    src="https://ik.imagekit.io/tvlk/blog/2021/05/WISATA-BALI.jpg"
-                    alt="Ubud Travel"
-                    class="w-full h-[450px] object-cover rounded-3xl shadow-xl">
-            </div>
-
-        </div>
-
-    </section>
-
-    <!-- VISI MISI -->
-    <section class="bg-gray-50 py-24">
-
-        <div class="max-w-7xl mx-auto px-6">
-
-            <div class="grid md:grid-cols-2 gap-16 items-center">
-
-                <!-- GAMBAR -->
-                <div>
-                    <img
-                        src="https://yoexplore.co.id/wp-content/uploads/2019/04/fakta-unik-tentang-bali-yoexplore-ebalitour.jpg"
-                        alt="Visi Misi"
-                        class="w-full h-[450px] object-cover rounded-3xl shadow-xl">
+{{-- MISI --}}
+<section class="wrapper bg-white">
+    <div class="flex flex-col md:flex-row gap-10 items-center">
+        <div class="w-full md:w-1/2" data-reveal="fade-right">
+            <p class="text-xs tracking-widest uppercase font-semibold text-gray-400 mb-2">Misi Kami</p>
+            <h2 class="font-extrabold leading-tight mb-4 text-gray-900" style="font-size: clamp(24px, 4vw, 36px);">
+                Satu Tujuan: Membawa Anda Lebih Dekat dengan Ubud
+            </h2>
+            <p class="text-gray-500 text-[15px] leading-relaxed mb-3">
+                Ubud Travel lahir dari kecintaan mendalam terhadap Ubud bukan sekadar destinasi wisata, melainkan pengalaman budaya yang hidup. Kami percaya setiap wisatawan berhak mendapat informasi yang jujur dan mudah diakses.
+            </p>
+            <p class="text-gray-500 text-[15px] leading-relaxed">
+                Direktori restoran, peta destinasi, tipe kamar hotel, hingga artikel budaya semuanya dalam satu platform.
+            </p>
+            <div class="flex gap-8 mt-6 flex-wrap">
+                <div data-reveal="fade-up" data-delay="100">
+                    <p class="font-black text-gray-900 text-3xl leading-none">200+</p>
+                    <p class="text-xs text-gray-400 uppercase tracking-wide mt-1">Destinasi</p>
                 </div>
-
-                <!-- TEKS -->
-                <div>
-
-                    <span class="text-gray-600 font-semibold uppercase">
-                        Visi dan Misi
-                    </span>
-
-                    <h2 class="text-4xl font-bold text-gray-800 mt-3 mb-6">
-                        Menjadi Panduan Wisata Terpercaya di Bali
-                    </h2>
-
-                    <div class="space-y-4 text-gray-600">
-
-                        <p>
-                            <strong>Visi:</strong>
-                            Menjadi platform wisata terpercaya yang membantu
-                            wisatawan menemukan pengalaman terbaik di Bali.
-                        </p>
-
-                        <p>
-                            <strong>Misi:</strong>
-                        </p>
-
-                        <ul class="list-disc pl-5 space-y-2">
-                            <li>Menyediakan informasi wisata yang lengkap.</li>
-                            <li>Membantu wisatawan merencanakan perjalanan.</li>
-                            <li>Mempromosikan budaya dan pariwisata Bali.</li>
-                            <li>Memberikan pengalaman pengguna yang mudah dan nyaman.</li>
-                        </ul>
-
-                    </div>
-
+                <div data-reveal="fade-up" data-delay="200">
+                    <p class="font-black text-gray-900 text-3xl leading-none">150+</p>
+                    <p class="text-xs text-gray-400 uppercase tracking-wide mt-1">Restoran</p>
                 </div>
-
+                <div data-reveal="fade-up" data-delay="300">
+                    <p class="font-black text-gray-900 text-3xl leading-none">80+</p>
+                    <p class="text-xs text-gray-400 uppercase tracking-wide mt-1">Hotel & Villa</p>
+                </div>
             </div>
-
         </div>
-
-    </section>
-
-    <!-- KEUNGGULAN & SEJARAH -->
-    <section class="max-w-7xl mx-auto px-6 py-24">
-
-        <div class="grid md:grid-cols-2 gap-10">
-
-            <!-- KEUNGGULAN -->
-            <div class="bg-white rounded-3xl shadow-lg p-8">
-
-                <h3 class="text-3xl font-bold mb-6 text-gray-800">
-                    Mengapa Memilih Kami
-                </h3>
-
-                <ul class="space-y-4 text-gray-600">
-
-                    <li>✅ Informasi wisata terpercaya</li>
-
-                    <li>✅ Destinasi populer dan terbaru</li>
-
-                    <li>✅ Rekomendasi hotel dan restoran terbaik</li>
-
-                    <li>✅ Tampilan website mudah digunakan</li>
-
-                    <li>✅ Update informasi secara berkala</li>
-
-                </ul>
-
+        <div class="w-full md:w-1/2" data-reveal="fade-left" data-delay="150">
+            <div class="relative" style="height: 340px;">
+                <img src="https://akcdn.detik.net.id/visual/2020/10/14/ayunan-zen-hideaway-ubud_169.jpeg?w=1200"
+                     alt="Ubud Temple" class="absolute top-0 right-0 rounded-2xl object-cover shadow-lg"
+                     style="width: 72%; height: 78%;">
+                <img src="https://www.civitatis.com/f/indonesia/bali/guia/ubud-m.jpg"
+                     alt="Ubud Rice" class="absolute bottom-0 left-0 rounded-2xl object-cover shadow-lg border-4 border-white"
+                     style="width: 60%; height: 65%;">
             </div>
-
-            <!-- SEJARAH -->
-            <div class="bg-white rounded-3xl shadow-lg p-8">
-
-                <h3 class="text-3xl font-bold mb-6 text-gray-800">
-                    Sejarah Perusahaan
-                </h3>
-
-                <p class="text-gray-600 leading-relaxed">
-                    Ubud Travel dibangun dengan tujuan membantu wisatawan
-                    mendapatkan informasi lengkap mengenai Bali dalam
-                    satu platform yang mudah digunakan.
-                </p>
-
-                <p class="text-gray-600 leading-relaxed mt-4">
-                    Dengan berkembangnya industri pariwisata digital,
-                    kami terus berinovasi untuk menghadirkan informasi
-                    destinasi, hotel, restoran, dan galeri wisata yang
-                    relevan bagi pengguna.
-                </p>
-
-            </div>
-
         </div>
-
-    </section>
-
-    <!-- TIM -->
-    <section class="bg-gray-50 py-24">
-
-        <div class="max-w-7xl mx-auto px-6">
-
-            <div class="text-center mb-16">
-
-                <h2 class="text-4xl font-bold text-gray-800 mb-4">
-                    Tim Kami
-                </h2>
-
-                <p class="text-gray-600">
-                    Orang-orang hebat di balik pengembangan Ubud Travel.
-                </p>
-
-            </div>
-
-            <div class="grid md:grid-cols-4 gap-8">
-
-                @for ($i = 1; $i <= 4; $i++)
-
-                    <div class="bg-white rounded-3xl shadow-lg overflow-hidden">
-
-                        <img
-                            src="https://placehold.co/400x400"
-                            alt="Tim"
-                            class="w-full">
-
-                        <div class="p-5 text-center">
-
-                            <h4 class="font-bold text-lg">
-                                Nama Anggota
-                            </h4>
-
-                            <p class="text-gray-500">
-                                Team Member
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                @endfor
-
-            </div>
-
-        </div>
-
-    </section>
-
-    <!-- CTA -->
-    <section class="py-24">
-
-        <div class="max-w-5xl mx-auto px-6">
-
-            <div class="bg-stone-100 rounded-3xl p-12 text-center text-gray-800 shadow-lg">
-
-                <h2 class="text-4xl font-bold mb-4">
-                    Siap Menjelajahi Bali Bersama Kami?
-                </h2>
-
-                <p class="text-lg mb-8">
-                    Temukan destinasi wisata terbaik, hotel nyaman,
-                    restoran favorit, dan pengalaman menarik lainnya.
-                </p>
-
-                <a href="#"
-                    class="inline-block bg-white text-gray-600 font-semibold px-8 py-4 rounded-xl hover:bg-gray-100 transition">
-                    Jelajahi Sekarang
-                </a>
-
-            </div>
-
-        </div>
-
-    </section>
-
+    </div>
 </section>
 
+{{-- APA YANG KAMI SEDIAKAN gambar + blur sebagai bg --}}
+<section class="relative overflow-hidden">
+    <img src="https://a.loveholidays.com/media-library/~production/d323ed0bb7e305eda8cba2f0d0a52ca405ac8e7d-3863x1300.jpg?auto=avif%2Cwebp&quality=80&dpr=1.5&optimize=high&fit=crop&width=1280&height=380"
+         alt="" class="absolute inset-0 w-full h-full object-cover" aria-hidden="true">
+    <div class="absolute inset-0 bg-black/10 backdrop-blur-sm"></div>
+    <div class="wrapper relative">
+        <div class="text-center mb-8" data-reveal="fade-up">
+            <p class="text-xs tracking-widest uppercase font-semibold text-white mb-2">Platform Kami</p>
+            <h2 class="font-extrabold text-white" style="font-size: clamp(22px, 4vw, 34px);">Informasi Lengkap, Satu Tempat</h2>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:-translate-y-1 transition-transform duration-300" data-reveal="fade-up" data-delay="100">
+                <i class="bi bi-cup-hot text-2xl text-gray-500 mb-3 block"></i>
+                <h3 class="font-bold text-gray-900 text-sm mb-1">Restoran & Kafe</h3>
+                <p class="text-gray-400 text-xs leading-relaxed">Menu, harga, jam buka, dan lokasi lengkap.</p>
+            </div>
+            <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:-translate-y-1 transition-transform duration-300" data-reveal="fade-up" data-delay="200">
+                <i class="bi bi-compass text-2xl text-gray-500 mb-3 block"></i>
+                <h3 class="font-bold text-gray-900 text-sm mb-1">Destinasi Wisata</h3>
+                <p class="text-gray-400 text-xs leading-relaxed">Peta lokasi, tiket, dan panduan singkat.</p>
+            </div>
+            <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:-translate-y-1 transition-transform duration-300" data-reveal="fade-up" data-delay="300">
+                <i class="bi bi-building text-2xl text-gray-500 mb-3 block"></i>
+                <h3 class="font-bold text-gray-900 text-sm mb-1">Hotel & Villa</h3>
+                <p class="text-gray-400 text-xs leading-relaxed">Tipe kamar, tarif per malam, dan fasilitas.</p>
+            </div>
+            <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:-translate-y-1 transition-transform duration-300" data-reveal="fade-up" data-delay="400">
+                <i class="bi bi-journal-richtext text-2xl text-gray-500 mb-3 block"></i>
+                <h3 class="font-bold text-gray-900 text-sm mb-1">Artikel Ubud</h3>
+                <p class="text-gray-400 text-xs leading-relaxed">Budaya, tips perjalanan, dan info terkini.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- NILAI KAMI --}}
+<section class="wrapper bg-white">
+    <div class="text-center mb-8" data-reveal="fade-up">
+        <p class="text-xs tracking-widest uppercase font-semibold text-gray-400 mb-2">Nilai Kami</p>
+        <h2 class="font-extrabold text-gray-900" style="font-size: clamp(22px, 4vw, 34px);">Prinsip yang Memandu Kami</h2>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="text-center p-5" data-reveal="zoom-in" data-delay="100">
+            <div class="w-12 h-12 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-xl text-gray-500 mx-auto mb-3">
+                <i class="bi bi-patch-check"></i>
+            </div>
+            <h4 class="font-bold text-gray-900 text-sm mb-1">Informasi Akurat</h4>
+            <p class="text-gray-400 text-xs leading-relaxed">Data diverifikasi langsung dari lapangan.</p>
+        </div>
+        <div class="text-center p-5" data-reveal="zoom-in" data-delay="200">
+            <div class="w-12 h-12 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-xl text-gray-500 mx-auto mb-3">
+                <i class="bi bi-people"></i>
+            </div>
+            <h4 class="font-bold text-gray-900 text-sm mb-1">Ramah Wisatawan</h4>
+            <p class="text-gray-400 text-xs leading-relaxed">Mudah dipahami siapa saja, dari manapun.</p>
+        </div>
+        <div class="text-center p-5" data-reveal="zoom-in" data-delay="300">
+            <div class="w-12 h-12 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-xl text-gray-500 mx-auto mb-3">
+                <i class="bi bi-heart"></i>
+            </div>
+            <h4 class="font-bold text-gray-900 text-sm mb-1">Cinta Budaya Lokal</h4>
+            <p class="text-gray-400 text-xs leading-relaxed">Jembatan antara wisatawan dan budaya Ubud.</p>
+        </div>
+        <div class="text-center p-5" data-reveal="zoom-in" data-delay="400">
+            <div class="w-12 h-12 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-xl text-gray-500 mx-auto mb-3">
+                <i class="bi bi-shield-check"></i>
+            </div>
+            <h4 class="font-bold text-gray-900 text-sm mb-1">Terpercaya</h4>
+            <p class="text-gray-400 text-xs leading-relaxed">Referensi utama wisatawan ke Ubud.</p>
+        </div>
+    </div>
+</section>
+
+<section class="relative overflow-hidden" data-reveal="fade-up">
+    <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1600&q=80"
+         alt="" class="absolute inset-0 w-full h-full object-cover" aria-hidden="true">
+    <div class="absolute inset-0 bg-white/75 backdrop-blur-sm"></div>
+    <div class="wrapper relative flex flex-col md:flex-row items-center justify-between gap-6 flex-wrap">
+        <div>
+            <h2 class="font-extrabold text-gray-900 mb-2" style="font-size: clamp(20px, 3vw, 30px);">Siap Menjelajahi Ubud?</h2>
+            <p class="text-gray-500 text-[15px]">Restoran, destinasi, villa semua informasi ada di sini.</p>
+        </div>
+        <div class="flex gap-3 flex-wrap">
+            <a href="{{ route('destinations.index') }}"
+               class="inline-flex items-center gap-2 bg-gray-900 hover:bg-gray-700 text-white px-6 py-3 rounded-xl text-sm font-semibold no-underline transition-colors duration-200">
+                <i class="bi bi-compass"></i> Jelajahi Destinasi
+            </a>
+            <a href="{{ route('galeri') }}"
+               class="inline-flex items-center gap-2 border border-gray-300 text-gray-700 hover:bg-gray-100 px-6 py-3 rounded-xl text-sm font-semibold no-underline transition-colors duration-200">
+                <i class="bi bi-images"></i> Lihat Galeri
+            </a>
+        </div>
+    </div>
+</section>
+ 
+<x-slot name="header">
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('Tentang Kami') }}</h2>
+</x-slot>
+ 
 </x-app-layout>
