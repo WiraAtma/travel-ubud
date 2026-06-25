@@ -153,7 +153,7 @@
                         <img 
                             class="w-full object-cover" 
                             style="height: 160px;"
-                            src="{{ $top->image_cover ? asset('storage/' . $top->image_cover) : 'https://placehold.co/600x400?text=No+Image' }}"
+                            src="{{ $top->image_cover ? Storage::disk('supabase')->url( $top->image_cover) : 'https://placehold.co/600x400?text=No+Image' }}"
                             alt="{{ $top->title }}"
                         >
                         <div class="p-3">

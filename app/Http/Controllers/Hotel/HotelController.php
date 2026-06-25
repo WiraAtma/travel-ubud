@@ -18,7 +18,7 @@ class HotelController extends Controller
         preg_match_all('/<img[^>]+src=["\']([^"\']+)["\']/', $content, $matches);
         foreach ($matches[1] as $url) {
             if (str_contains($url, 'hotels/content-images/')) {
-                Storage::disk('public')->delete('hotels/content-images/' . basename($url));
+                Storage::disk('supabase')->delete('hotels/content-images/' . basename($url));
             }
         }
     }
@@ -146,7 +146,7 @@ public function page(Request $request)
             // Upload cover hotel
             $imagePath = null;
             if ($request->hasFile('image_cover')) {
-                $imagePath = $request->file('image_cover')->store('hotels/covers', 'public');
+                $imagePath = $request->file('image_cover')->store('hotels/covers', 'supabase');
             }
 
             $hotel = Hotel::create([
@@ -169,7 +169,7 @@ public function page(Request $request)
                     $roomImagePath = null;
                     if ($request->hasFile("rooms.{$index}.image_cover")) {
                         $roomImagePath = $request->file("rooms.{$index}.image_cover")
-                                                 ->store('hotels/rooms', 'public');
+                                                 ->store('hotels/rooms', 'supabase');
                     }
 
                     HotelRoom::create([
@@ -189,7 +189,7 @@ public function page(Request $request)
                     $linkImagePath = null;
                     if ($request->hasFile("links.{$index}.image_cover")) {
                         $linkImagePath = $request->file("links.{$index}.image_cover")
-                                                  ->store('hotels/links', 'public');
+                                                  ->store('hotels/links', 'supabase');
                     }
 
                     HotelLink::create([
@@ -271,8 +271,8 @@ public function page(Request $request)
             // Update cover hotel
             $imagePath = $hotel->image_cover;
             if ($request->hasFile('image_cover')) {
-                if ($imagePath) Storage::disk('public')->delete($imagePath);
-                $imagePath = $request->file('image_cover')->store('hotels/covers', 'public');
+                if ($imagePath) Storage::disk('supabase')->delete($imagePath);
+                $imagePath = $request->file('image_cover')->store('hotels/covers', 'supabase');
             }
 
             //  Hapus gambar Summernote lama jika konten berubah
@@ -285,7 +285,7 @@ public function page(Request $request)
 
                 foreach ($oldImages as $url) {
                     if (!in_array($url, $newImages) && str_contains($url, 'hotels/content-images/')) {
-                        Storage::disk('public')->delete('hotels/content-images/' . basename($url));
+                        Storage::disk('supabase')->delete('hotels/content-images/' . basename($url));
                     }
                 }
             }
@@ -309,7 +309,7 @@ public function page(Request $request)
 
             $hotel->rooms->each(function (HotelRoom $room) use ($submittedRoomIds) {
                 if (!in_array($room->id, $submittedRoomIds)) {
-                    if ($room->image_cover) Storage::disk('public')->delete($room->image_cover);
+                    if ($room->image_cover) Storage::disk('supabase')->delete($room->image_cover);
                     $room->delete();
                 }
             });
@@ -319,9 +319,9 @@ public function page(Request $request)
                 if ($request->hasFile("rooms.{$index}.image_cover")) {
                     if (!empty($roomData['id'])) {
                         $existing = HotelRoom::find($roomData['id']);
-                        if ($existing?->image_cover) Storage::disk('public')->delete($existing->image_cover);
+                        if ($existing?->image_cover) Storage::disk('supabase')->delete($existing->image_cover);
                     }
-                    $roomImagePath = $request->file("rooms.{$index}.image_cover")->store('hotels/rooms', 'public');
+                    $roomImagePath = $request->file("rooms.{$index}.image_cover")->store('hotels/rooms', 'supabase');
                 }
 
                 $roomPayload = [
@@ -347,7 +347,7 @@ public function page(Request $request)
             // Hapus link yang sudah tidak ada di form
             $hotel->links->each(function (HotelLink $link) use ($submittedLinkIds) {
                 if (!in_array($link->id, $submittedLinkIds)) {
-                    if ($link->image_cover) Storage::disk('public')->delete($link->image_cover);
+                    if ($link->image_cover) Storage::disk('supabase')->delete($link->image_cover);
                     $link->delete();
                 }
             });
@@ -358,9 +358,9 @@ public function page(Request $request)
                 if ($request->hasFile("links.{$index}.image_cover")) {
                     if (!empty($linkData['id'])) {
                         $existing = HotelLink::find($linkData['id']);
-                        if ($existing?->image_cover) Storage::disk('public')->delete($existing->image_cover);
+                        if ($existing?->image_cover) Storage::disk('supabase')->delete($existing->image_cover);
                     }
-                    $linkImagePath = $request->file("links.{$index}.image_cover")->store('hotels/links', 'public');
+                    $linkImagePath = $request->file("links.{$index}.image_cover")->store('hotels/links', 'supabase');
                 }
 
                 $linkPayload = [
@@ -394,16 +394,16 @@ public function page(Request $request)
         if (!$isOwner && !$isAdmin) abort(403, 'Unauthorized action.');
         if ($isOwner && $hotel->banned) abort(403, 'Hotel ini sedang dibanned dan tidak dapat dihapus.');
 
-        if ($hotel->image_cover) Storage::disk('public')->delete($hotel->image_cover);
+        if ($hotel->image_cover) Storage::disk('supabase')->delete($hotel->image_cover);
         $this->deleteContentImages($hotel->description ?? '');
 
         $hotel->rooms->each(function (HotelRoom $room) {
-            if ($room->image_cover) Storage::disk('public')->delete($room->image_cover);
+            if ($room->image_cover) Storage::disk('supabase')->delete($room->image_cover);
         });
 
         // Hapus cover semua links
         $hotel->links->each(function (HotelLink $link) {
-            if ($link->image_cover) Storage::disk('public')->delete($link->image_cover);
+            if ($link->image_cover) Storage::disk('supabase')->delete($link->image_cover);
         });
 
         $hotel->delete(); // cascade: rooms & links terhapus otomatis
@@ -420,10 +420,10 @@ public function page(Request $request)
             'file' => 'required|image|mimes:jpg,jpeg,png,webp,gif|max:4096',
         ]);
 
-        $path = $request->file('file')->store('hotels/content-images', 'public');
+        $path = $request->file('file')->store('hotels/content-images', 'supabase');
 
         return response()->json([
-            'url' => '/storage/' . $path
+            'url' => Storage::disk('supabase')->url($path)
         ]);
     }
 

@@ -33,7 +33,7 @@ class RestaurantController extends Controller
         foreach ($matches[1] as $url) {
             if (str_contains($url, '/storage/restaurants/content-images/')) {
                 $path = 'restaurants/content-images/' . basename($url);
-                Storage::disk('public')->delete($path);
+                Storage::disk('supabase')->delete($path);
             }
         }
     }
@@ -160,7 +160,7 @@ public function page(Request $request)
 
             $imagePath = null;
             if ($request->hasFile('image_cover')) {
-                $imagePath = $request->file('image_cover')->store('restaurants/covers', 'public');
+                $imagePath = $request->file('image_cover')->store('restaurants/covers', 'supabase');
             }
 
             $restaurant = Restaurant::create([
@@ -183,7 +183,7 @@ public function page(Request $request)
                 $linkCoverPath = null;
                 if ($request->hasFile("links.{$linkKey}.image_cover")) {
                     $linkCoverPath = $request->file("links.{$linkKey}.image_cover")
-                                             ->store('restaurants/links', 'public');
+                                             ->store('restaurants/links', 'supabase');
                 }
 
                 RestaurantLink::create([
@@ -200,7 +200,7 @@ public function page(Request $request)
                 $menuImagePath = null;
                 if ($request->hasFile("menus.{$index}.image")) {
                     $menuImagePath = $request->file("menus.{$index}.image")
-                                             ->store('restaurants/menus', 'public');
+                                             ->store('restaurants/menus', 'supabase');
                 }
 
                 RestaurantMenu::create([
@@ -284,8 +284,8 @@ public function page(Request $request)
 
             $imagePath = $restaurant->image_cover;
             if ($request->hasFile('image_cover')) {
-                if ($imagePath) Storage::disk('public')->delete($imagePath);
-                $imagePath = $request->file('image_cover')->store('restaurants/covers', 'public');
+                if ($imagePath) Storage::disk('supabase')->delete($imagePath);
+                $imagePath = $request->file('image_cover')->store('restaurants/covers', 'supabase');
             }
 
             $restaurant->update([
@@ -308,7 +308,7 @@ public function page(Request $request)
             // Hapus link yang tidak ada di form
             $restaurant->links->each(function (RestaurantLink $link) use ($submittedLinkIds) {
                 if (!in_array($link->id, $submittedLinkIds)) {
-                    if ($link->image_cover) Storage::disk('public')->delete($link->image_cover);
+                    if ($link->image_cover) Storage::disk('supabase')->delete($link->image_cover);
                     $link->delete();
                 }
             });
@@ -322,11 +322,11 @@ public function page(Request $request)
                     if (!empty($linkData['id'])) {
                         $existingLink = RestaurantLink::find($linkData['id']);
                         if ($existingLink && $existingLink->image_cover) {
-                            Storage::disk('public')->delete($existingLink->image_cover);
+                            Storage::disk('supabase')->delete($existingLink->image_cover);
                         }
                     }
                     $linkCoverPath = $request->file("links.{$linkKey}.image_cover")
-                                             ->store('restaurants/links', 'public');
+                                             ->store('restaurants/links', 'supabase');
                 }
 
                 $payload = [
@@ -355,7 +355,7 @@ public function page(Request $request)
 
             $restaurant->menus->each(function (RestaurantMenu $menu) use ($submittedMenuIds) {
                 if (!in_array($menu->id, $submittedMenuIds)) {
-                    if ($menu->image) Storage::disk('public')->delete($menu->image);
+                    if ($menu->image) Storage::disk('supabase')->delete($menu->image);
                     $menu->delete();
                 }
             });
@@ -367,11 +367,11 @@ public function page(Request $request)
                     if (!empty($menuData['id'])) {
                         $existing = RestaurantMenu::find($menuData['id']);
                         if ($existing && $existing->image) {
-                            Storage::disk('public')->delete($existing->image);
+                            Storage::disk('supabase')->delete($existing->image);
                         }
                     }
                     $menuImagePath = $request->file("menus.{$index}.image")
-                                             ->store('restaurants/menus', 'public');
+                                             ->store('restaurants/menus', 'supabase');
                 }
 
                 $payload = [
@@ -413,17 +413,17 @@ public function page(Request $request)
         if ($isOwner && $restaurant->banned) abort(403, 'Restoran ini sedang dibanned dan tidak dapat dihapus.');
 
         if ($restaurant->image_cover) {
-            Storage::disk('public')->delete($restaurant->image_cover);
+            Storage::disk('supabase')->delete($restaurant->image_cover);
         }
 
         $this->deleteContentImages($restaurant->description ?? '');
 
         $restaurant->links->each(function (RestaurantLink $link) {
-            if ($link->image_cover) Storage::disk('public')->delete($link->image_cover);
+            if ($link->image_cover) Storage::disk('supabase')->delete($link->image_cover);
         });
 
         $restaurant->menus->each(function (RestaurantMenu $menu) {
-            if ($menu->image) Storage::disk('public')->delete($menu->image);
+            if ($menu->image) Storage::disk('supabase')->delete($menu->image);
         });
 
         $restaurant->delete();
@@ -441,10 +441,10 @@ public function page(Request $request)
             'file' => 'required|image|mimes:jpg,jpeg,png,webp,gif|max:4096',
         ]);
 
-        $path = $request->file('file')->store('restaurants/content-images', 'public');
+        $path = $request->file('file')->store('restaurants/content-images', 'supabase');
 
         return response()->json([
-            'url' => '/storage/' . $path,
+            'url' => Storage::disk('supabase')->url($path),
         ]);
     }
 
@@ -486,7 +486,7 @@ public function page(Request $request)
 
         foreach ($deletedUrls as $url) {
             if (str_contains($url, '/storage/restaurants/content-images/')) {
-                Storage::disk('public')->delete('restaurants/content-images/' . basename($url));
+                Storage::disk('supabase')->delete('restaurants/content-images/' . basename($url));
             }
         }
     }

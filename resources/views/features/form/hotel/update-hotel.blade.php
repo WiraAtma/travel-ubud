@@ -86,7 +86,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Gambar Sampul Hotel</label>
                     @if ($hotel->image_cover)
                         <div id="hotel-cover-preview-wrapper" class="mb-3">
-                            <img id="hotel-cover-preview" src="{{ asset('storage/' . $hotel->image_cover) }}" alt="Cover"
+                            <img id="hotel-cover-preview" src="{{ Storage::disk('supabase')->url( $hotel->image_cover) }}" alt="Cover"
                                  class="w-full max-h-64 object-cover rounded-xl border border-gray-200">
                         </div>
                     @else
@@ -194,7 +194,7 @@
         'id' => $link->id,
         'label' => $link->label,
         'url' => $link->url,
-        'image_cover' => $link->image_cover ? asset('storage/' . $link->image_cover) : null,
+        'image_cover' => $link->image_cover ? Storage::disk('supabase')->url( $link->image_cover) : null,
     ])->values();
 
     $existingRooms = $hotel->rooms->map(fn ($room) => [
@@ -203,7 +203,7 @@
         'max_guests' => $room->max_guests,
         'price' => $room->price,
         'facilities' => $room->facilities,
-        'image_cover' => $room->image_cover ? asset('storage/' . $room->image_cover) : null,
+        'image_cover' => $room->image_cover ? Storage::disk('supabase')->url( $room->image_cover) : null,
     ])->values();
 @endphp
 <script>

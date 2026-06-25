@@ -87,7 +87,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Gambar Sampul Restoran</label>
                     <div id="cover-preview-wrapper" class="{{ $restaurant->image_cover ? '' : 'hidden' }} mb-3">
                         <img id="cover-preview"
-                             src="{{ $restaurant->image_cover ? Storage::url($restaurant->image_cover) : '#' }}"
+                             src="{{ $restaurant->image_cover ? Storage::disk('supabase')->url($restaurant->image_cover) : '#' }}"
                              alt="Preview" class="w-full max-h-64 object-cover rounded-xl border border-gray-200">
                     </div>
                     <label for="image_cover"
@@ -147,7 +147,7 @@
                          class="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs rounded-full max-w-[180px] truncate">
                         <span class="w-5 h-5 rounded-full bg-indigo-200 flex-shrink-0 overflow-hidden flex items-center justify-center">
                             @if ($link->image_cover)
-                                <img src="{{ Storage::url($link->image_cover) }}" class="w-full h-full object-cover" alt="">
+                                <img src="{{ Storage::disk('supabase')->url($link->image_cover) }}" class="w-full h-full object-cover" alt="">
                             @else
                                 <svg class="w-3 h-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
@@ -207,7 +207,7 @@
                                      class="w-14 h-14 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center bg-gray-50 overflow-hidden flex-shrink-0 transition">
                                     @if ($link->image_cover)
                                         <img id="link-thumb-img-existing-{{ $link->id }}"
-                                             src="{{ Storage::url($link->image_cover) }}"
+                                             src="{{ Storage::disk('supabase')->url($link->image_cover) }}"
                                              alt="Cover" class="w-full h-full object-cover">
                                     @else
                                         <svg id="link-thumb-placeholder-existing-{{ $link->id }}" class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -299,7 +299,7 @@
                             <label class="block text-xs font-medium text-gray-600 mb-1">Foto Menu</label>
                             <div id="menu-img-wrapper-existing-{{ $menu->id }}" class="{{ $menu->image ? '' : 'hidden' }} mb-2">
                                 <img id="menu-img-preview-existing-{{ $menu->id }}"
-                                     src="{{ $menu->image ? Storage::url($menu->image) : '#' }}"
+                                     src="{{ $menu->image ? Storage::disk('supabase')->url($menu->image) : '#' }}"
                                      class="w-full max-h-28 object-cover rounded-lg border border-gray-200">
                             </div>
                             <label for="menu-img-input-existing-{{ $menu->id }}"

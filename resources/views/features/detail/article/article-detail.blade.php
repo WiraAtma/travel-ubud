@@ -3,7 +3,7 @@
     {{-- ══ HERO COVER ══ --}}
     <header style="position: relative; overflow: hidden;">
         <img
-            src="{{ $article->image_cover ? asset('storage/' . $article->image_cover) : 'https://placehold.co/1200x500?text=No+Image' }}"
+            src="{{ $article->image_cover ? Storage::disk('supabase')->url( $article->image_cover) : 'https://placehold.co/1200x500?text=No+Image' }}"
             alt="{{ $article->title }}"
             style="display: block; width: 100%; height: 480px; object-fit: cover;"
         >

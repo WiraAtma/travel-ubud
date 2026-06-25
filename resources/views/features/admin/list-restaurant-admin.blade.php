@@ -96,7 +96,7 @@
                             {{-- Cover --}}
                             <td class="px-6 py-4">
                                 @if ($restaurant->image_cover)
-                                    <img src="{{ Storage::url($restaurant->image_cover) }}"
+                                    <img src="{{ Storage::disk('supabase')->url($restaurant->image_cover) }}"
                                          alt="cover"
                                          class="w-16 h-12 object-cover rounded-lg border border-gray-100">
                                 @else

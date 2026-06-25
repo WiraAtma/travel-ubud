@@ -3,7 +3,7 @@
     {{-- ══ HERO COVER ══ --}}
     <header style="position: relative; overflow: hidden;">
         <img
-            src="{{ $hotel->image_cover ? asset('storage/' . $hotel->image_cover) : 'https://placehold.co/1200x500?text=No+Image' }}"
+            src="{{ $hotel->image_cover ? Storage::disk('supabase')->url( $hotel->image_cover) : 'https://placehold.co/1200x500?text=No+Image' }}"
             alt="{{ $hotel->name }}"
             style="display: block; width: 100%; height: 480px; object-fit: cover;"
         >
@@ -76,7 +76,7 @@
                                     <div class="flex flex-col sm:flex-row gap-4 p-4 rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-sm transition">
                                         {{-- Room image --}}
                                         @if ($room->image_cover)
-                                            <img src="{{ asset('storage/' . $room->image_cover) }}"
+                                            <img src="{{ Storage::disk('supabase')->url( $room->image_cover) }}"
                                                  alt="{{ $room->name }}"
                                                  class="w-full sm:w-36 h-28 object-cover rounded-xl flex-shrink-0">
                                         @else
@@ -128,7 +128,7 @@
                                     <a href="{{ $link->url }}" target="_blank" rel="noopener noreferrer"
                                        class="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-gray-300 hover:shadow-sm transition no-underline group">
                                         @if ($link->image_cover)
-                                            <img src="{{ asset('storage/' . $link->image_cover) }}"
+                                            <img src="{{ Storage::disk('supabase')->url( $link->image_cover) }}"
                                                  alt="{{ $link->label }}"
                                                  class="w-14 h-14 object-cover rounded-lg flex-shrink-0">
                                         @else

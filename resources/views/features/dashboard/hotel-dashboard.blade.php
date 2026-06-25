@@ -45,7 +45,7 @@
                        data-delay="{{ ($loop->index % 5) * 100 + 100 }}">
                         <div class="top-dest-img-wrap">
                             <img
-                                src="{{ $top->image_cover ? asset('storage/' . $top->image_cover) : 'https://placehold.co/600x400?text=No+Image' }}"
+                                src="{{ $top->image_cover ? Storage::disk('supabase')->url( $top->image_cover) : 'https://placehold.co/600x400?text=No+Image' }}"
                                 alt="{{ $top->name }}"
                                 class="w-full h-full object-cover"
                             >
@@ -112,7 +112,7 @@
 
                             <div class="dest-thumb flex-shrink-0 relative">
                                 <img
-                                    src="{{ $hotel->image_cover ? asset('storage/' . $hotel->image_cover) : 'https://placehold.co/220x160?text=No+Image' }}"
+                                    src="{{ $hotel->image_cover ? Storage::disk('supabase')->url( $hotel->image_cover) : 'https://placehold.co/220x160?text=No+Image' }}"
                                     alt="{{ $hotel->name }}"
                                     class="w-full h-full object-cover"
                                 >

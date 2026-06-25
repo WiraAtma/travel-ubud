@@ -3,7 +3,7 @@
     {{-- ══ HERO COVER ══ --}}
     <header style="position: relative; overflow: hidden;">
         <img
-            src="{{ $restaurant->image_cover ? asset('storage/' . $restaurant->image_cover) : 'https://placehold.co/1200x500?text=No+Image' }}"
+            src="{{ $restaurant->image_cover ? Storage::disk('supabase')->url( $restaurant->image_cover) : 'https://placehold.co/1200x500?text=No+Image' }}"
             alt="{{ $restaurant->name }}"
             style="display: block; width: 100%; height: 480px; object-fit: cover;"
         >
@@ -80,7 +80,7 @@
 
                     <div class="w-20 h-20 rounded-lg flex-shrink-0 overflow-hidden bg-gray-100">
                         @if ($menu->image)
-                            <img src="{{ asset('storage/' . $menu->image) }}"
+                            <img src="{{ Storage::disk('supabase')->url( $menu->image) }}"
                                  alt="{{ $menu->name }}"
                                  class="w-full h-full object-cover">
                         @else
@@ -131,7 +131,7 @@
                 <a href="{{ $link->url }}" target="_blank" rel="noopener noreferrer"
                    class="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-gray-300 hover:shadow-sm transition no-underline group">
                     @if ($link->image_cover)
-                        <img src="{{ asset('storage/' . $link->image_cover) }}"
+                        <img src="{{ Storage::disk('supabase')->url( $link->image_cover) }}"
                              alt="{{ $link->label }}"
                              class="w-14 h-14 object-cover rounded-lg flex-shrink-0">
                     @else

@@ -34,7 +34,7 @@ class CompanyRequestController extends Controller
             ]);
         }
 
-        $path = $request->file('proof_file')->store('company-proofs', 'public');
+        $path = $request->file('proof_file')->store('company-proofs', 'supabase');
 
         CompanyRequest::create([
             'user_id'      => $user->id,
@@ -67,7 +67,7 @@ class CompanyRequestController extends Controller
         }
 
         if ($companyRequest->proof_file) {
-            Storage::disk('public')->delete($companyRequest->proof_file);
+            Storage::disk('supabase')->delete($companyRequest->proof_file);
         }
         
         $companyRequest->delete();

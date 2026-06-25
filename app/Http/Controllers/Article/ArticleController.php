@@ -18,7 +18,7 @@ class ArticleController extends Controller
         foreach ($matches[1] as $url) {
             if (str_contains($url, 'articles/content-images/')) {
                 $path = 'articles/content-images/' . basename($url);
-                Storage::disk('public')->delete($path);
+                Storage::disk('supabase')->delete($path);
             }
         }
     }
@@ -108,7 +108,7 @@ public function page(Request $request)
         $imagePath = null;
         if ($request->hasFile('image_cover')) {
             $imagePath = $request->file('image_cover')
-                                 ->store('articles/covers', 'public');
+                                 ->store('articles/covers', 'supabase');
         }
 
         Article::create([
@@ -152,10 +152,10 @@ public function page(Request $request)
         $imagePath = $article->image_cover;
         if ($request->hasFile('image_cover')) {
             if ($imagePath) {
-                Storage::disk('public')->delete($imagePath);
+                Storage::disk('supabase')->delete($imagePath);
             }
             $imagePath = $request->file('image_cover')
-                                 ->store('articles/covers', 'public');
+                                 ->store('articles/covers', 'supabase');
         }
 
         // Hapus gambar konten lama yang tidak dipakai lagi
@@ -171,7 +171,7 @@ public function page(Request $request)
             foreach ($oldImages as $url) {
                 if (!in_array($url, $newImages) && str_contains($url, 'articles/content-images/')) {
                     $path = 'articles/content-images/' . basename($url);
-                    Storage::disk('public')->delete($path);
+                    Storage::disk('supabase')->delete($path);
                 }
             }
         }
@@ -202,7 +202,7 @@ public function page(Request $request)
 
         // Hapus cover
         if ($article->image_cover) {
-            Storage::disk('public')->delete($article->image_cover);
+            Storage::disk('supabase')->delete($article->image_cover);
         }
 
         // Hapus semua gambar di dalam konten
@@ -220,10 +220,10 @@ public function page(Request $request)
             'file' => 'required|image|mimes:jpg,jpeg,png,webp,gif|max:4096',
         ]);
 
-        $path = $request->file('file')->store('articles/content-images', 'public');
+        $path = $request->file('file')->store('articles/content-images', 'supabase');
 
         return response()->json([
-            'url' => '/storage/' . $path,
+            'url' => Storage::disk('supabase')->url($path),
         ]);
     }
 

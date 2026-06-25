@@ -50,7 +50,7 @@
                       {{-- Preview cover lama atau baru --}}
                       <div id="cover-preview-wrapper" class="{{ $article->image_cover ? '' : 'hidden' }} mb-3">
                           <img id="cover-preview"
-                               src="{{ $article->image_cover ? Storage::url($article->image_cover) : '#' }}"
+                               src="{{ $article->image_cover ? Storage::disk('supabase')->url($article->image_cover) : '#' }}"
                                alt="Preview Cover"
                                class="w-full max-h-64 object-cover rounded-xl border border-gray-200">
                       </div>

@@ -25,7 +25,7 @@ class DestinationController extends Controller
         foreach ($matches[1] as $url) {
             if (str_contains($url, 'destinations/content-images/')) {
                 $path = 'destinations/content-images/' . basename($url);
-                Storage::disk('public')->delete($path);
+                Storage::disk('supabase')->delete($path);
             }
         }
     }
@@ -130,7 +130,7 @@ class DestinationController extends Controller
         $imagePath = null;
         if ($request->hasFile('image_cover')) {
             $imagePath = $request->file('image_cover')
-                                 ->store('destinations/covers', 'public');
+                                 ->store('destinations/covers', 'supabase');
         }
 
         $destination = Destination::create([
@@ -146,7 +146,7 @@ class DestinationController extends Controller
             $linkCoverPath = null;
             if ($request->hasFile("links.{$sortOrder}.image_cover")) {
                 $linkCoverPath = $request->file("links.{$sortOrder}.image_cover")
-                                         ->store('destinations/links', 'public');
+                                         ->store('destinations/links', 'supabase');
             }
 
             DestinationLink::create([
@@ -205,9 +205,9 @@ class DestinationController extends Controller
         // Update cover
         $imagePath = $destination->image_cover;
         if ($request->hasFile('image_cover')) {
-            if ($imagePath) Storage::disk('public')->delete($imagePath);
+            if ($imagePath) Storage::disk('supabase')->delete($imagePath);
             $imagePath = $request->file('image_cover')
-                                 ->store('destinations/covers', 'public');
+                                 ->store('destinations/covers', 'supabase');
         }
 
         // Hapus gambar konten lama yang tidak dipakai lagi
@@ -220,7 +220,7 @@ class DestinationController extends Controller
 
             foreach ($oldImages as $url) {
                 if (!in_array($url, $newImages) && str_contains($url, 'destinations/content-images/')) {
-                    Storage::disk('public')->delete('destinations/content-images/' . basename($url));
+                    Storage::disk('supabase')->delete('destinations/content-images/' . basename($url));
                 }
             }
         }
@@ -240,7 +240,7 @@ class DestinationController extends Controller
         // Hapus link yang dihapus dari form
         $destination->links->each(function (DestinationLink $link) use ($submittedIds) {
             if (!in_array($link->id, $submittedIds)) {
-                if ($link->image_cover) Storage::disk('public')->delete($link->image_cover);
+                if ($link->image_cover) Storage::disk('supabase')->delete($link->image_cover);
                 $link->delete();
             }
         });
@@ -254,11 +254,11 @@ class DestinationController extends Controller
                 if (!empty($linkData['id'])) {
                     $existing = DestinationLink::find($linkData['id']);
                     if ($existing && $existing->image_cover) {
-                        Storage::disk('public')->delete($existing->image_cover);
+                        Storage::disk('supabase')->delete($existing->image_cover);
                     }
                 }
                 $linkCoverPath = $request->file("links.{$sortOrder}.image_cover")
-                                         ->store('destinations/links', 'public');
+                                         ->store('destinations/links', 'supabase');
             }
 
             $payload = [
@@ -300,13 +300,13 @@ class DestinationController extends Controller
         }
 
         if ($destination->image_cover) {
-            Storage::disk('public')->delete($destination->image_cover);
+            Storage::disk('supabase')->delete($destination->image_cover);
         }
 
         $this->deleteContentImages($destination->content);
 
         $destination->links->each(function (DestinationLink $link) {
-            if ($link->image_cover) Storage::disk('public')->delete($link->image_cover);
+            if ($link->image_cover) Storage::disk('supabase')->delete($link->image_cover);
         });
 
         $destination->delete();
@@ -322,10 +322,10 @@ class DestinationController extends Controller
             'file' => 'required|image|mimes:jpg,jpeg,png,webp,gif|max:4096',
         ]);
 
-        $path = $request->file('file')->store('destinations/content-images', 'public');
+        $path = $request->file('file')->store('destinations/content-images', 'supabase');
 
         return response()->json([
-            'url' => '/storage/' . $path,
+            'url' => Storage::disk('supabase')->url($path),
         ]);
     }
 
