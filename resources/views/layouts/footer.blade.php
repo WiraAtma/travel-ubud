@@ -35,15 +35,6 @@
           <li><a class="no-underline text-gray-900 hover:text-gray-500 transition-colors flex items-center gap-2" href=""><i class="bi bi-tiktok"></i> Tiktok</a></li>
         </ul>
       </div>
-
     </div>
-  </div>
-
-  <hr class="mt-8 border-gray-200">
-
-  <div class="text-center pb-4">
-    <small class="text-gray-500">
-      Dibuat Untuk Tugas UTS Oleh Wira, Ivan, Lidya, dan Maria dari Kelas Informatika Malam Universitas Primakara
-    </small>
   </div>
 </footer>
