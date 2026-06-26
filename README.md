@@ -1,4 +1,3 @@
-Tugas UTS Pemrograman Web
 Judul : Web Informasi Daerah Ubud Untuk Turis
 
 Nama Kelompok :
@@ -10,16 +9,44 @@ Nama Kelompok :
 Step :
 1. Clone Repo
   ```
-  git clone https://github.com/WiraAtma/tugas-uts-pweb
-  ```
-  WARNING! : ARAHKAH CLONE FOLDER KE DALAM xampp/htdocs, Jika Tidak Maka Apache tidak akan mendeteksi file  
-
-2. Buka Xampp Start Apache Saja, Lalu Buka Browser Ketik Berikut
-  ```
-    http://localhost/tugas-uts-pweb/  
+  git clone https://github.com/WiraAtma/travel-ubud.git
   ```
 
-3. Pastikan memakai internet karena semua asset diambil dari internet
+2. Pastikan Node js dan Composer Sudah di Install
+  - Cek Node js :
+    ```
+      node -v 
+    ```
+  - Cek Composer :
+    ```
+      npm -v
+    ```
+
+3. Setelah Berhasil Clone dan Terinstall Ikuti Langkah Berikut :
+  ```
+  composer install
+  ```
+  ```
+  php artisan key:generate
+  ```
+  ```
+  npm install
+  ```
+  ```
+  php artisan storage:link
+  ```
+
+4. Run Localhost 
+  ```
+  npm run dev:all
+  ```
+
+5. Buka Lewat Browser (Chrome, Edge, Safari, dll) :
+  ```
+  http://127.0.0.1:8000/ atau http://localhost:8000
+  ```
+
+6. Pastikan memakai internet karena semua asset dan data database diambil dari cloud
 
 4. Jika Sudah ada Tampilan Maka Bisa Mulai Coding
 
