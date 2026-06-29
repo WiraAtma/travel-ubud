@@ -12,7 +12,7 @@
         <div class="header-container">
             <div data-reveal="fade-up" class="header-text-content">
                 <h1 class="font-extrabold" style="font-size: clamp(22px, 5vw, 48px); line-height: 1.2; margin-bottom: 12px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
-                    Temukan Keindahan dan Budaya Ubud
+                    Temukan Informasi Terbaru di Ubud
                 </h1>
                 <p style="font-size: clamp(13px, 3vw, 16px); line-height: 1.6; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
                     Jelajahi berbagai artikel tentang tempat wisata, tradisi lokal, dan pengalaman unik
