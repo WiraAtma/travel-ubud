@@ -8,6 +8,13 @@
                     <p class="text-gray-500 mt-1">Daftar semua pengguna yang terdaftar</p>
                 </div>
             </div>
+
+            @if(session('success'))
+                <div class="mb-4 rounded-xl bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             <div class="flex items-center justify-between gap-4">
                 {{-- Search --}}
                 <form action="{{ route('users.page') }}" method="GET" class="flex items-center gap-2 w-full max-w-sm">
@@ -80,6 +87,7 @@
                                 <th class="px-6 py-4 font-medium">Role</th>
                                 <th class="px-6 py-4 font-medium">Tanggal Dibuat</th>
                                 <th class="px-6 py-4 font-medium">Terakhir di Update</th>
+                                <th class="px-6 py-4 font-medium">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
@@ -127,10 +135,31 @@
                                     {{ \Carbon\Carbon::parse($user->updated_at)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
                                 </td>
 
+                                <td class="px-6 py-4 text-right space-x-2">
+                                    @if(auth()->user()->id !== $user->id)
+                                        @if(in_array(auth()->user()->role, ['admin', 'superadmin']) && $user->role === 'user')
+                                            <form action="{{ route('users.promote', $user) }}" method="POST" class="inline">
+                                                @csrf
+                                                <button type="button" onclick="confirmAction(this.closest('form'), 'Yakin ingin menjadikan pengguna ini admin?', 'Hanya role user biasa yang bisa dipromosikan menjadi admin. Role company tidak dapat dipilih.', 'warning', 'Ya, jadikan admin')" class="inline-flex items-center px-3 py-1.5 rounded-full bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition">
+                                                    Jadikan Admin
+                                                </button>
+                                            </form>
+                                        @endif
+
+                                        @if(auth()->user()->role === 'superadmin' && $user->role === 'admin')
+                                            <form action="{{ route('users.demote', $user) }}" method="POST" class="inline">
+                                                @csrf
+                                                <button type="button" onclick="confirmAction(this.closest('form'), 'Yakin ingin menurunkan admin ini menjadi user?', 'Hanya superadmin bisa menurunkan admin menjadi pengguna biasa.', 'warning', 'Ya, turunkan ke user')" class="inline-flex items-center px-3 py-1.5 rounded-full bg-red-600 text-white text-xs font-medium hover:bg-red-700 transition">
+                                                    Turunkan ke User
+                                                </button>
+                                            </form>
+                                        @endif
+                                    @endif
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-16 text-center text-gray-400">
+                                <td colspan="7" class="px-6 py-16 text-center text-gray-400">
                                     <div class="flex flex-col items-center gap-2">
                                         <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>

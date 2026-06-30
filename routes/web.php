@@ -135,6 +135,8 @@ Route::middleware(['auth', 'verified'])
 
         // User Management
         Route::get('/list-user', [UserController::class, 'page'])->name('users.page');
+        Route::post('/list-user/{user}/promote', [UserController::class, 'promote'])->name('users.promote');
+        Route::post('/list-user/{user}/demote', [UserController::class, 'demote'])->name('users.demote');
 
         // Post Management (views)
         Route::view('/manage-post', 'features.admin.list-post-destinasi-dashboard')->name('manage-post');
