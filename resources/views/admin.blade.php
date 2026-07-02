@@ -31,7 +31,6 @@
                 {{-- Total User — admin only --}}
                 @if ($canUsers)
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="bg-blue-500 h-1.5 w-full"></div>
                         <div class="p-4">
                             <i class="bi bi-people-fill text-blue-500 text-2xl mb-1 block"></i>
                             <div class="text-2xl font-bold text-gray-800">{{ number_format($stats['total_users']) }}</div>
@@ -43,7 +42,6 @@
                 {{-- Destinasi --}}
                 @if ($canDestination)
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="bg-emerald-500 h-1.5 w-full"></div>
                         <div class="p-4">
                             <i class="bi bi-geo-alt-fill text-emerald-500 text-2xl mb-1 block"></i>
                             <div class="text-2xl font-bold text-gray-800">{{ number_format($stats['total_destinations']) }}</div>
@@ -55,7 +53,6 @@
                 {{-- Hotel --}}
                 @if ($canHotel)
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="bg-purple-500 h-1.5 w-full"></div>
                         <div class="p-4">
                             <i class="bi bi-building-fill text-purple-500 text-2xl mb-1 block"></i>
                             <div class="text-2xl font-bold text-gray-800">{{ number_format($stats['total_hotels']) }}</div>
@@ -67,7 +64,6 @@
                 {{-- Restoran --}}
                 @if ($canRestaurant)
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="bg-orange-500 h-1.5 w-full"></div>
                         <div class="p-4">
                             <i class="bi bi-cup-hot-fill text-orange-500 text-2xl mb-1 block"></i>
                             <div class="text-2xl font-bold text-gray-800">{{ number_format($stats['total_restaurants']) }}</div>
@@ -79,7 +75,6 @@
                 {{-- Artikel — semua role --}}
                 @if ($canArticle)
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="bg-rose-500 h-1.5 w-full"></div>
                         <div class="p-4">
                             <i class="bi bi-newspaper text-rose-500 text-2xl mb-1 block"></i>
                             <div class="text-2xl font-bold text-gray-800">{{ number_format($stats['total_articles']) }}</div>
@@ -91,7 +86,6 @@
                 {{-- Request Pending — admin only --}}
                 @if ($canCompanyReq)
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="bg-yellow-500 h-1.5 w-full"></div>
                         <div class="p-4">
                             <i class="bi bi-hourglass-split text-yellow-500 text-2xl mb-1 block"></i>
                             <div class="text-2xl font-bold text-gray-800">{{ number_format($stats['pending_requests']) }}</div>

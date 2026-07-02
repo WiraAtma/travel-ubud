@@ -99,29 +99,51 @@
 
                 <aside id="default-sidebar" class="w-64 shrink-0 bg-white border-e border-gray-200 min-h-screen">
                     <div class="h-full px-3 py-4 overflow-y-auto">
-                        <ul class="space-y-5 text-gray-600 font-medium">
+
+                        @php
+                            /**
+                             * Cek apakah URL saat ini cocok dengan salah satu pattern menu.
+                             * Otomatis menambahkan wildcard '/*' di belakang pattern,
+                             * jadi 'admin/article' juga match untuk 'admin/article/create',
+                             * 'admin/article/edit/1', dst.
+                             */
+                            function isActiveMenu(string ...$patterns): bool {
+                                foreach ($patterns as $pattern) {
+                                    if (request()->is($pattern) || request()->is($pattern . '/*')) {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            }
+                        @endphp
+
+                        <ul class="space-y-5 text-gray-600 font-medium ">
                             @auth
-                            <li>
+                            {{--
+                                Dashboard hanya aktif untuk /admin persis atau /admin/xxx yang BUKAN
+                                termasuk salah satu menu spesifik di bawah (biar ga dobel aktif).
+                            --}}
+                            <li class="{{ isActiveMenu('admin') && !isActiveMenu('admin/request-company', 'admin/list-user', 'admin/article', 'admin/destination', 'admin/restaurant', 'admin/hotel') ? 'bg-gray-200 rounded-r-lg' : '' }}">
                                 <a href="/admin" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                                     <i class="bi bi-speedometer"></i>
                                     <span class="ms-3">Dashboard</span>
                                 </a>
                             </li>
                             @if(auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin')
-                                <li>
+                                <li class="{{ isActiveMenu('admin/request-company') ? 'bg-gray-200 rounded-r-lg' : '' }}">
                                     <a href="/admin/request-company" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                                         <i class="bi bi-building-fill-check"></i>
                                         <span class="flex-1 ms-3 whitespace-nowrap">Verified Company</span>
                                     </a>
                                 </li>
-                                <li>
+                                <li class="{{ isActiveMenu('admin/list-user') ? 'bg-gray-200 rounded-r-lg' : '' }}">
                                     <a href="/admin/list-user" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                                         <i class="bi bi-people-fill"></i>
                                         <span class="flex-1 ms-3 whitespace-nowrap">Kelola Users</span>
                                     </a>
                                 </li>
                                 @endif
-                                <li>
+                                <li class="{{ isActiveMenu('admin/article') ? 'bg-gray-200 rounded-r-lg' : '' }}">
                                     <a href="/admin/article" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                                         <i class="bi bi-file-earmark-text-fill"></i>
                                         <span class="flex-1 ms-3 whitespace-nowrap">Kelola Artikel</span>
@@ -129,7 +151,7 @@
                                 </li>
 
                                 @if((auth()->user()->role === 'company' && auth()->user()->company_role === 'destination') || (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin'))
-                                <li>
+                                <li class="{{ isActiveMenu('admin/destination') ? 'bg-gray-200 rounded-r-lg' : '' }}">
                                     <a href="/admin/destination" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                                         <i class="bi bi-backpack2-fill"></i>
                                         <span class="flex-1 ms-3 whitespace-nowrap">Kelola Destinasi</span>
@@ -137,7 +159,7 @@
                                 </li>
                                 @endif
                                 @if((auth()->user()->role === 'company' && auth()->user()->company_role === 'restaurant') || (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin'))
-                                <li>
+                                <li class="{{ isActiveMenu('admin/restaurant') ? 'bg-gray-200 rounded-r-lg' : '' }}">
                                     <a href="/admin/restaurant" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                                         <i class="bi bi-fork-knife"></i>
                                         <span class="flex-1 ms-3 whitespace-nowrap">Kelola Restoran</span>
@@ -145,7 +167,7 @@
                                 </li>
                                 @endif
                                 @if((auth()->user()->role === 'company' && auth()->user()->company_role === 'hotel') || (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin'))
-                                <li>
+                                <li class="{{ isActiveMenu('admin/hotel') ? 'bg-gray-200 rounded-r-lg' : '' }}">
                                     <a href="/admin/hotel" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                                         <i class="bi bi-buildings-fill"></i>
                                         <span class="flex-1 ms-3 whitespace-nowrap">Kelola Hotel</span>
