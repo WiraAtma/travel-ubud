@@ -26,7 +26,6 @@ class AdminDashboardController extends Controller
         $canHotel       = $isAdmin || ($isCompany && $companyRole === 'hotel');
         $canCompanyReq  = $isAdmin;
 
-        // ─── Cache key per role agar data tidak mix antar user ───────────
         $cacheKey = "admin_dashboard_{$user->role}_{$companyRole}";
 
         $data = Cache::remember($cacheKey, now()->addMinutes(10), function () use (
@@ -42,36 +41,28 @@ class AdminDashboardController extends Controller
 
     private function buildDashboardData($isAdmin, $canDestination, $canRestaurant, $canHotel, $canCompanyReq): array
     {
-        // ─── Summary Cards ────────────────────────────────────────────────
         $stats = [];
-        if ($isAdmin)        $stats['total_users']        = User::count();
-        if ($canDestination) $stats['total_destinations'] = Destination::count();
-        if ($canHotel)       $stats['total_hotels']       = Hotel::count();
-        if ($canRestaurant)  $stats['total_restaurants']  = Restaurant::count();
+        if ($isAdmin)         $stats['total_users']        = User::count();
+        if ($canDestination)  $stats['total_destinations'] = Destination::count();
+        if ($canHotel)        $stats['total_hotels']       = Hotel::count();
+        if ($canRestaurant)   $stats['total_restaurants']  = Restaurant::count();
         $stats['total_articles']   = Article::count();
-        if ($canCompanyReq)  $stats['pending_requests']   = CompanyRequest::where('status', 'pending')->count();
+        if ($canCompanyReq)   $stats['pending_requests']   = CompanyRequest::where('status', 'pending')->count();
 
-        // ─── Content Growth — 1 query per model pakai GROUP BY ────────────
-        // Ganti 24 query menjadi max 4 query
         $startDate = now()->subMonths(5)->startOfMonth();
 
         $contentGrowth = ['labels' => [], 'destinations' => [], 'hotels' => [], 'restaurants' => [], 'articles' => []];
         $months = collect(range(5, 0))->map(fn($i) => now()->subMonths($i));
         $contentGrowth['labels'] = $months->map(fn($m) => $m->format('M Y'))->values();
 
-        // Helper: satu query GROUP BY year/month
         $growthQuery = fn($model) => $model::where('created_at', '>=', $startDate)
-            ->select(
-                DB::raw('YEAR(created_at) as year'),
-                DB::raw('MONTH(created_at) as month'),
-                DB::raw('COUNT(*) as total')
-            )
-            ->groupBy('year', 'month')
+            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as ym, COUNT(*) as total")
+            ->groupBy('ym')
             ->get()
-            ->keyBy(fn($r) => "{$r->year}-{$r->month}");
+            ->keyBy('ym');
 
         $mapToMonths = fn($rows) => $months->map(
-            fn($m) => $rows->get("{$m->year}-{$m->month}")?->total ?? 0
+            fn($m) => $rows->get($m->format('Y-m'))?->total ?? 0
         )->values();
 
         if ($canDestination) $contentGrowth['destinations'] = $mapToMonths($growthQuery(Destination::class));
@@ -80,16 +71,26 @@ class AdminDashboardController extends Controller
         $contentGrowth['articles'] = $mapToMonths($growthQuery(Article::class));
 
         $avgRatings = ['labels' => [], 'data' => []];
-        if ($canDestination) { $avgRatings['labels'][] = 'Destinasi'; $avgRatings['data'][] = round(Destination::avg('rating') ?? 0, 2); }
-        if ($canHotel)       { $avgRatings['labels'][] = 'Hotel';     $avgRatings['data'][] = round(Hotel::avg('rating') ?? 0, 2); }
-        if ($canRestaurant)  { $avgRatings['labels'][] = 'Restoran';  $avgRatings['data'][] = round(Restaurant::avg('rating') ?? 0, 2); }
+        if ($canDestination) {
+            $row = Destination::where('banned', false)->selectRaw('AVG(rating) as avg_rating')->first();
+            $avgRatings['labels'][] = 'Destinasi';
+            $avgRatings['data'][]   = round($row->avg_rating ?? 0, 2);
+        }
+        if ($canHotel) {
+            $row = Hotel::where('banned', false)->selectRaw('AVG(rating) as avg_rating')->first();
+            $avgRatings['labels'][] = 'Hotel';
+            $avgRatings['data'][]   = round($row->avg_rating ?? 0, 2);
+        }
+        if ($canRestaurant) {
+            $row = Restaurant::where('banned', false)->selectRaw('AVG(rating) as avg_rating')->first();
+            $avgRatings['labels'][] = 'Restoran';
+            $avgRatings['data'][]   = round($row->avg_rating ?? 0, 2);
+        }
 
-        // ─── Company Request Charts — admin only ──────────────────────────
         $companyRequestChart = ['labels' => [], 'data' => []];
         $companyFieldChart   = ['labels' => [], 'data' => []];
 
         if ($canCompanyReq) {
-            // 1 query untuk status
             $requestStatus = CompanyRequest::select('status', DB::raw('count(*) as total'))
                 ->groupBy('status')->pluck('total', 'status');
 
@@ -102,7 +103,6 @@ class AdminDashboardController extends Controller
                 ],
             ];
 
-            // 1 query untuk field
             $fieldBreakdown = CompanyRequest::select('field', DB::raw('count(*) as total'))
                 ->groupBy('field')->pluck('total', 'field');
 
@@ -116,13 +116,12 @@ class AdminDashboardController extends Controller
             ];
         }
 
-        // ─── User Growth ──────────────────────────────────────────────────
         $userGrowth = ['labels' => [], 'data' => []];
         if ($isAdmin) {
             $userRows = User::where('created_at', '>=', $startDate)
-                ->select(DB::raw('YEAR(created_at) as year'), DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as total'))
-                ->groupBy('year', 'month')->get()
-                ->keyBy(fn($r) => "{$r->year}-{$r->month}");
+                ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as ym, COUNT(*) as total")
+                ->groupBy('ym')->get()
+                ->keyBy('ym');
 
             $userGrowth = [
                 'labels' => $contentGrowth['labels'],
@@ -130,7 +129,6 @@ class AdminDashboardController extends Controller
             ];
         }
 
-        // ─── Top Rated — select hanya kolom yang dibutuhkan ──────────────
         $topDestinations = $canDestination
             ? Destination::where('banned', false)->orderByDesc('rating')->limit(5)->get(['title', 'rating', 'rating_count'])
             : collect();
@@ -143,10 +141,8 @@ class AdminDashboardController extends Controller
             ? Restaurant::where('banned', false)->orderByDesc('rating')->limit(5)->get(['name', 'rating', 'rating_count'])
             : collect();
 
-        // ─── Banned Stats — 1 query per model dengan kondisional ─────────
         $bannedStats = ['destinations' => 0, 'hotels' => 0, 'restaurants' => 0];
         if ($isAdmin) {
-            // Gabungkan jadi 3 query ringan (sudah minimal)
             $bannedStats = [
                 'destinations' => Destination::where('banned', true)->count(),
                 'hotels'       => Hotel::where('banned', true)->count(),
