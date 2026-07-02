@@ -2,7 +2,7 @@
     <header style="position: relative; overflow: hidden;">
         <img 
             class="w-full block object-cover" 
-            src="{{ asset('header-image-dashboard.png') }}" 
+            src="{{ asset('header-website.gif') }}" 
             alt="Header Image"
             style="display: block; width: 100%; height: 500px; object-fit: cover;"
         >
